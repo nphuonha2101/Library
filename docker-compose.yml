@@ -1,0 +1,6 @@
+﻿services:
+  library:
+    image: library
+    build:
+      context: .
+      dockerfile: Dockerfile

@@ -1,5 +1,7 @@
 using Library.ApiEndpoints.Implements;
 using Library.Constants;
+using Library.Data.Repositories.Implements;
+using Library.Data.Repositories.Interfaces;
 using Library.DatabaseContext;
 using Library.Services.Implements;
 using Library.Services.Interfaces;
@@ -7,24 +9,37 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container (dependency injection)
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+/*
+ * The following code snippet configures the application to use the Swagger UI and database.
+ * This is default configuration for the application.
+ */
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 // Configure database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
-// End of database configuration
 
 
-// Services
+/*
+ * This following code snippet configures the application to use all services.
+ * These services will be injected into the API endpoints automatically.
+ * You can add more services here.
+ * Scoped services are created once per request, it is suitable for services that work with the database.
+ */
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+// builder.Services.AddScoped<IAuthorService, AuthorService>();
+// ...
 
-// End of services
 
+// application configuration
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,16 +48,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 
 
-// Define API endpoints
+/*
+ * This following code is the API endpoints configuration.
+ * You can add more endpoints here.
+ */
 var apiGroup = app.MapGroup(ApiPrefix.ApiVersion1);
 
 var bookEndpoint = new BookEndpoint();
 bookEndpoint.DefineEndpoints(app, apiGroup);
 
-// End of API endpoints
+// var authorEndpoint = new AuthorEndpoint();
+// authorEndpoint.DefineEndpoints(app, apiGroup);
+
 app.Run();
 

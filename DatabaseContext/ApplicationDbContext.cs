@@ -1,8 +1,12 @@
-using Library.Models;
+using Library.Entities.Implements;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.DatabaseContext;
 
+/**
+ * Application database context
+ * This class is used to configure the database and entities
+ */
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

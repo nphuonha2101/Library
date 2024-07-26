@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Services.Implements;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Library.Entities.Implements;
 
@@ -7,15 +9,22 @@ namespace Library.Entities.Implements;
 public class Book : IEntity
 {
     [Key]
+    [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id { get; set; }
-    [Required]
-    [StringLength(255)]
-    public string Name { get; set; }
-    public long AuthorId { get; set; }
-    [ForeignKey("AuthorId")]
-    public Author author { get; set; }
+    public long  Id { get; set; }
     [Required]
     [StringLength(50)]
-    public string isbn { get; set; }
+    [Column("isbn")]
+    public string isBn { get; set; }
+    [Required]
+    [StringLength(255)]
+    [Column("description")]
+    public string Description { get; set; }
+    [Column("import_date")]
+    public DateTime ImportedDate { get; set; }
+    [Required]
+    [Column("quantity")]
+    public int Quantity { get; set; }
+    public List<BookAuthor> BookAuthors { get; set; }
+    public List<BookCategory> BookCategories { get; set; }
 }

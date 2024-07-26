@@ -7,6 +7,15 @@ namespace Library.Entities.Implements;
 public class Author : IEntity
 {
     [Key] [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    private long Id { get; set; }
+    public long Id { get; set; }
+    [Required] [StringLength(255)]
+    [Column("full_name")]
+    public string FullName { get; set; }
+    [Column("dob")]
+    public DateTime Dob { get; set; }
+    [Required] [StringLength(255)]
+    [Column("description")]
+    public string Description { get; set; }
+    public List<BookAuthor> BookAuthors { get; set; }
 
 }

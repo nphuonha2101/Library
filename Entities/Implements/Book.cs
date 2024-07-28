@@ -20,6 +20,7 @@ public class Book : IEntity
     [StringLength(255)]
     [Column("description")]
     public string Description { get; set; }
+    [Required]
     [Column("import_date")]
     public DateTime ImportedDate { get; set; }
     [Required]

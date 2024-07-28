@@ -11,6 +11,7 @@ public class Author : IEntity
     [Required] [StringLength(255)]
     [Column("full_name")]
     public string FullName { get; set; }
+    [Required]
     [Column("dob")]
     public DateTime Dob { get; set; }
     [Required] [StringLength(255)]

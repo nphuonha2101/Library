@@ -8,14 +8,14 @@ namespace Library.Entities.Implements;
 public class BookAuthor : IEntity
 {
     [Key]
-    [ForeignKey("BookId")]
     [Column("book_id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long BookId { get; set; }
+    [ForeignKey("BookId")]
     public Book Book { get; set; }
-    [ForeignKey("AuthorId")]
     [Key]
     [Column("author_id")]
     public long AuthorId { get; set; }
+    [ForeignKey("AuthorId")]
     public Author Author { get; set; }
 }

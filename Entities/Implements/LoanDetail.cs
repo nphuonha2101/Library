@@ -11,10 +11,10 @@ public class LoanDetail
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long LoanId { get; set; }
     public Loan Loan { get; set; }
-    [ForeignKey("Book Id")]
     [Key]
     [Column("book_id")]
     public long BookId { get; set; }
+    [ForeignKey("BookId")]
     public Book Book { get; set; }
     [Required]
     [Column("quantity")]

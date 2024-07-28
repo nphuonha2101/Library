@@ -9,9 +9,9 @@ public class LoanFine
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
     [Required]
-    [ForeignKey("LoanId")]
     [Column("loan_id")]
     public long LoanId { get; set; }
+    [ForeignKey("LoanId")]
     public Loan Loan { get; set; }
     [Required]
     [Column("amount")]

@@ -11,9 +11,12 @@ public class BookRepository: Repository<Book>, IBookRepository
     {
     }
 
-    // Using LinQ to get books by author
     public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
     {
-          return await AppDbContext.Books.Where(b => b.AuthorId == authorId).ToListAsync() ;
+        var query = from book in AppDbContext.Books
+            where book.BookAuthors.Any(bookAuthor => bookAuthor.AuthorId == authorId)
+            select book;
+
+        return await query.ToListAsync();
     }
 }

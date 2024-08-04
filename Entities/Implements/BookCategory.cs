@@ -1,17 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Entities;
 using Library.Entities.Implements;
+using Microsoft.EntityFrameworkCore;
 
-public class BookCategory
+[Table("book_category")]
+[PrimaryKey(nameof(BookId), nameof(CategoryId))]
+public class BookCategory : IEntity
 {
-    [Key, Column(Order = 0)]
-    [ForeignKey("Book")]
-    public long BookId { get; set; } 
-
-    [Key, Column(Order = 1)]
-    [ForeignKey("Category")]
-    public long CategoryId { get; set; }
-
-    public virtual Book Book { get; set; }
-    public virtual Category Category { get; set; }
+    [Key, Column("book_id")] public long BookId { get; set; }
+    [Key, Column("category_id")] public long CategoryId { get; set; }
+    [ForeignKey("BookId")] public virtual Book Book { get; set; } = null!;
+    [ForeignKey("CategoryId")] public virtual Category Category { get; set; } = null!;
 }

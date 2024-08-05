@@ -14,6 +14,6 @@ public class BookRepository: Repository<Book>, IBookRepository
     // Using LinQ to get books by author
     public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
     {
-          return await AppDbContext.Books.Where(b => b.AuthorId == authorId).ToListAsync() ;
+          return await AppDbContext.Books.Where(b => b.Id == authorId).ToListAsync() ;
     }
 }

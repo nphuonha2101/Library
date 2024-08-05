@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.Entities.Implements;
 [Table("loans")]
-public class Loan
+public class Loan: IEntity
 {
     [Key]
     [Column("id")]

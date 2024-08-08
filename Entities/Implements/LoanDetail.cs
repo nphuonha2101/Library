@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.Entities.Implements;
 
-public class LoanDetail
+public class LoanDetail: IEntity
 {
     [Key]
     [ForeignKey("LoanId")]

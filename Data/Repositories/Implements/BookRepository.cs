@@ -5,15 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-public class BookRepository: Repository<Book>, IBookRepository
+public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book>(appDbContext), IBookRepository
 {
-    public BookRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-    {
-    }
-
-    // Using LinQ to get books by author
     public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
     {
-          return await AppDbContext.Books.Where(b => b.Id == authorId).ToListAsync() ;
+        var query = from book in AppDbContext.Books
+            where book.BookAuthors.Any(bookAuthor => bookAuthor.AuthorId == authorId)
+            select book;
+
+        return await query.ToListAsync();
     }
 }

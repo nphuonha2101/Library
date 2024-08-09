@@ -8,5 +8,5 @@ namespace Library.Services.Interfaces;
  */
 public interface IBookService : IService<Book>
 {
-
+    List<Book> GetAllByAuthor(int authorId);
 }

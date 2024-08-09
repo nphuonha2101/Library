@@ -30,10 +30,7 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
     public async Task<T> GetByIdAsync(int id)
     {
         var entity = await Entities.FindAsync(id);
-        if (entity == null)
-        {
-            throw new Exception("Entity not found with id: " + id);
-        }
+        if (entity == null) throw new Exception("Entity not found with id: " + id);
 
         return entity;
     }
@@ -61,10 +58,9 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
         var existingEntity = await Entities.FindAsync(id);
         if (existingEntity == null)
             return false;
-        
+
         Entities.Remove(existingEntity);
         await AppDbContext.SaveChangesAsync();
         return true;
-        
     }
 }

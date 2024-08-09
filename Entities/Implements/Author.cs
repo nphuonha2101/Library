@@ -6,12 +6,10 @@ namespace Library.Entities.Implements;
 [Table("authors")]
 public class Author : IEntity
 {
-    public Author(string fullName, DateTime? dob, string description)
+    public Author(string fullName, DateTime dob, string description)
     {
         this.FullName = fullName;
-
-        if (dob != null)
-            this.Dob = (DateTime)dob;
+        this.Dob = (DateTime)dob;
         this.Description = description;
     }
 
@@ -25,6 +23,7 @@ public class Author : IEntity
     [Column("full_name")]
     public string FullName { get; set; } = null!;
 
+    [Required]
     [Column("dob")] public DateTime Dob { get; set; }
 
     [Required]

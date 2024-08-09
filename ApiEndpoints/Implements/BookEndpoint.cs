@@ -1,5 +1,4 @@
 using Library.Entities.Implements;
-using Library.Services.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,21 +21,21 @@ public class BookEndpoint : IEndpoint
             var book = service.GetById(id);
             return book != null ? Results.Ok(book) : Results.NotFound("Book not found.");
         }).WithName("GetBookById");
-        
+
         // Add book
         apiGroup.MapPost("/books", ([FromServices] IBookService service, [FromForm] Book book) =>
         {
             var result = service.Add(book);
             return result != null ? Results.Created($"/books/{book.Id}", book) : Results.BadRequest("Book not added.");
         }).WithName("AddBook");
-        
+
         // Update book
         apiGroup.MapPut("/books/{id}", ([FromServices] IBookService service, int id, [FromForm] Book book) =>
         {
             var result = service.Update(id, book);
             return result ? Results.Ok(book) : Results.BadRequest("Book not updated.");
         }).WithName("UpdateBook");
-        
+
         // Delete book
         apiGroup.MapDelete("/books/{id}", ([FromServices] IBookService service, int id) =>
         {

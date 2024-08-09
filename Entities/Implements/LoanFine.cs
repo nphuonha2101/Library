@@ -7,8 +7,10 @@ namespace Library.Entities.Implements;
 public class LoanFine : IEntity
 {
     [Key]
+    [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
+
     [Required] [Column("loan_id")] public long LoanId { get; set; }
     [ForeignKey("LoanId")] public Loan Loan { get; set; } = null!;
     [Required] [Column("amount")] public double Amount { get; set; }

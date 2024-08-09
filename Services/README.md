@@ -1,6 +1,9 @@
 ## Chú thích cho Service
+
 - Mỗi khi tạo 1 Service, bạn cần tạo 1 interface cho nó extends interface <code>IService</code>.
-- Nếu Service của bạn có các phương thức đặc biệt ngoài CRUD thì bạn cần khai báo phương thức đó trong Interface của Service đó:
+- Nếu Service của bạn có các phương thức đặc biệt ngoài CRUD thì bạn cần khai báo phương thức đó trong Interface của
+  Service đó:
+
 ```csharp
 // In interface IBookService
 using Library.Entities.Implements;
@@ -17,8 +20,12 @@ public interface IBookService : IService<Book>
 
 }
 ```
-- Nếu Service của bạn không có phương thức đặc biệt nào ngoài CRUD bạn cũng phải tạo 1 interface rỗng vào trong thư mục <code>Interfaces</code> (mục đích là để Dependency Injection)
-- Trong thư mục <code>Implements</code> bạn cần phải implements interface của Service bạn vừa khai báo và hiện thực các phương thức trong interface đó. Xem ví dụ về <code>BookService.cs</code>
+
+- Nếu Service của bạn không có phương thức đặc biệt nào ngoài CRUD bạn cũng phải tạo 1 interface rỗng vào trong thư
+  mục <code>Interfaces</code> (mục đích là để Dependency Injection)
+- Trong thư mục <code>Implements</code> bạn cần phải implements interface của Service bạn vừa khai báo và hiện thực các
+  phương thức trong interface đó. Xem ví dụ về <code>BookService.cs</code>
+
 ```csharp
 using Library.Data.Repositories.Interfaces;
 using Library.Entities.Implements;
@@ -58,7 +65,9 @@ public class BookService : IBookService
 }
 ```
 
-- Sau khi đã tạo interface và implement của service thì bạn cần vào Program.cs để khai báo cho service đó để .NET thực hiện Dependency Injection
+- Sau khi đã tạo interface và implement của service thì bạn cần vào Program.cs để khai báo cho service đó để .NET thực
+  hiện Dependency Injection
+
 ```csharp
   // In Program.cs
 

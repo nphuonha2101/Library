@@ -5,12 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-public class BookRepository: Repository<Book>, IBookRepository
+public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book>(appDbContext), IBookRepository
 {
-    public BookRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-    {
-    }
-
     public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
     {
         var query = from book in AppDbContext.Books

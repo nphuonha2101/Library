@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Library.Entities;
@@ -6,9 +5,7 @@ using Library.Entities;
 [Table("categories")]
 public class Category : IEntity
 {
-    [Key]
-    [Column("id")]
-    public long Id { get; init; }
+    [Key] [Column("id")] public long Id { get; init; }
 
     [Required]
     [StringLength(100)]
@@ -19,6 +16,5 @@ public class Category : IEntity
     [Column("description")]
     public string Description { get; set; } = null!;
 
-    public virtual ICollection<BookCategory> BookCategories { get; set; }
-    
+    public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
 }

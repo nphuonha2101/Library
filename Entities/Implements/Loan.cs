@@ -5,6 +5,7 @@ namespace Library.Entities.Implements;
 
 [Table("loans")]
 public class Loan : IEntity
+
 {
     [Key]
     [Column("id")]

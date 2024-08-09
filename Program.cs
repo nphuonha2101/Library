@@ -34,8 +34,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+
 builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
 builder.Services.AddScoped<IBookCategoryRepository, BookCategoryRepository>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+
+
+// builder.Services.AddScoped<IAuthorService, AuthorService>();
+
 // ...
 
 

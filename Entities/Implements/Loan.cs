@@ -19,5 +19,5 @@ public class Loan : IEntity
     [Required] [Column("loan_date")] public DateTime LoanDate { get; set; }
 
     [Column("loan_fine_id")] public long LoanFineId;
-    [ForeignKey("LoanFineId")] public LoanFine LoanFine { get; set; } = null!;
+    [ForeignKey("LoanFineId")] public virtual LoanFine LoanFine { get; set; } = null!;
 }

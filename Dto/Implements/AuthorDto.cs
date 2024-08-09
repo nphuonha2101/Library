@@ -6,7 +6,7 @@ namespace Library.Dto.Implements;
 public class AuthorDto : IDto
 {
     private string FullName { get; set; } = null!;
-    private DateTime? Dob { get; set; }
+    private DateTime Dob { get; set; }
     private string Description { get; set; } = null!;
     
     public IEntity ToEntity()

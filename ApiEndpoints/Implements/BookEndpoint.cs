@@ -1,5 +1,8 @@
+using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -23,22 +26,25 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetBookById");
 
         // Add book
-        apiGroup.MapPost("/books", ([FromServices] IBookService service, [FromForm] Book book) =>
+        apiGroup.MapPost("/books", async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, [FromForm] BookDto dto) =>
         {
-            var result = service.Add(book);
-            return result != null ? Results.Created($"/books/{book.Id}", book) : Results.BadRequest("Book not added.");
+            await antiforgery.ValidateRequestAsync(context);
+            var result = service.Add(dto);
+            return result != null ? Results.Created($"/books/{result.Id}", result) : Results.BadRequest("Book not added.");
         }).WithName("AddBook");
 
         // Update book
-        apiGroup.MapPut("/books/{id}", ([FromServices] IBookService service, int id, [FromForm] Book book) =>
+        apiGroup.MapPut("/books/{id}", async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id, [FromForm] Book book) =>
         {
+            await antiforgery.ValidateRequestAsync(context);
             var result = service.Update(id, book);
             return result ? Results.Ok(book) : Results.BadRequest("Book not updated.");
         }).WithName("UpdateBook");
 
         // Delete book
-        apiGroup.MapDelete("/books/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapDelete("/books/{id}", async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id) =>
         {
+            await antiforgery.ValidateRequestAsync(context);
             var result = service.Delete(id);
             return result ? Results.Ok("Book deleted.") : Results.BadRequest("Book not deleted.");
         }).WithName("DeleteBook");

@@ -1,3 +1,4 @@
+using Library.Dto.Implements;
 using Library.Entities.Implements;
 
 namespace Library.Services.Interfaces;
@@ -9,4 +10,5 @@ namespace Library.Services.Interfaces;
 public interface IBookService : IService<Book>
 {
     List<Book> GetAllByAuthor(int authorId);
+    Book Add(BookDto bookDto);
 }

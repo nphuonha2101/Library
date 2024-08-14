@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Library.Entities;
 using Library.Entities.Implements;
 
@@ -31,5 +32,6 @@ public class User : IEntity
 
     [Column("is_admin")] public bool IsAdmin { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Loan> Loans { get; set; } = new HashSet<Loan>();
 }

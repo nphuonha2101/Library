@@ -21,13 +21,6 @@ public class UserEndpoint : IEndpoint
             return user != null ? Results.Ok(user) : Results.NotFound("User not found.");
         }).WithName("GetUserById");
         
-        // Add user
-        apiGroup.MapPost("/users", ([FromServices] IUserService service, User user) =>
-        {
-            var newUser = service.Add(user);
-            return newUser != null ? Results.Created($"/users/{newUser.Id}", newUser) : Results.BadRequest("Failed to add user.");
-        }).WithName("AddUser");
-        
         // Update user
         apiGroup.MapPut("/users/{id}", ([FromServices] IUserService service, int id, User user) =>
         {

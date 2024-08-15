@@ -6,6 +6,8 @@ using Library.Data.Repositories.Interfaces;
 using Library.DatabaseContext;
 using Library.Services.Implements;
 using Library.Services.Interfaces;
+using Library.Utils.Securities;
+using Library.Utils.Securities.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -53,17 +55,7 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowAllOrigins",
-//         policyConfig =>
-//         {
-//             policyConfig.AllowAnyOrigin() 
-//                 .AllowAnyMethod()
-//                 .AllowAnyHeader()
-//                 .AllowCredentials(); 
-//         });
-// });
+
 
 /*
  * This following code snippet configures the application to use all services.
@@ -76,11 +68,12 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
-
 builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
 builder.Services.AddScoped<IBookCategoryRepository, BookCategoryRepository>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<BearerToken>();
+builder.Services.AddSingleton<ITokenInvalid, TokenInvalid>();
 
 
 // builder.Services.AddScoped<IAuthorService, AuthorService>();
@@ -107,7 +100,19 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 // app.UseAuthorization();
-app.UseAntiforgery();
+app.Use(async (context, next) =>
+{
+    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    var tokenInvalid = context.RequestServices.GetRequiredService<ITokenInvalid>();
+
+    if (tokenInvalid.IsInvalid(token))
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Token is invalid.");
+        return;
+    }
+    await next();
+});
 
 // Apply migrations automatically
 using (var scope = app.Services.CreateScope())
@@ -124,10 +129,17 @@ var apiGroup = app.MapGroup(ApiPrefix.ApiVersion1);
 
 var bookEndpoint = new BookEndpoint();
 bookEndpoint.DefineEndpoints(app, apiGroup);
-var antiForgeryEndpoint = new AntiForgeryEndpoint();
-antiForgeryEndpoint.DefineEndpoints(app, apiGroup);
 
-// var authorEndpoint = new AuthorEndpoint();
-// authorEndpoint.DefineEndpoints(app, apiGroup);
+
+// Add authentication endpoints
+// /auth/* (Ex: /auth/login, /auth/logout, /auth/antiforgery-token)
+var authenticateApiGroup = app.MapGroup("/auth");
+
+var antiForgeryEndpoint = new AntiForgeryEndpoint();
+antiForgeryEndpoint.DefineEndpoints(app, authenticateApiGroup);
+var authentication = new Authentication();
+authentication.DefineEndpoints(app, authenticateApiGroup);
+
+
 
 app.Run();

@@ -20,7 +20,7 @@ namespace Library.Services.Implements
 
         public LoanDetail GetById(int id)
         {
-            return _loanDetailRepository.GetByIdAsync(id).Result;
+            throw new NotImplementedException();
         }
 
         public LoanDetail Add(LoanDetail entity)
@@ -36,6 +36,11 @@ namespace Library.Services.Implements
         public bool Delete(int id)
         {
             return _loanDetailRepository.DeleteAsync(id).Result;
+        }
+
+        public LoanDetail GetByLoanIdAndBookId(int loanId, int bookId)
+        {
+            return _loanDetailRepository.GetByLoanIdAndBookIdAsync(loanId, bookId).Result;
         }
     }
 }

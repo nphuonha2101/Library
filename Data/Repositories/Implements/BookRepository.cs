@@ -52,4 +52,32 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
         return bookEntity;
     }
 
+    public Task<List<Author>> GetAuthorsAsync(long bookId)
+    {
+        var query = from author in AppDbContext.Authors
+            join bookAuthor in AppDbContext.BookAuthors on author.Id equals bookAuthor.AuthorId
+            where bookAuthor.BookId == bookId
+            select author;
+
+        return query.ToListAsync();
+    }
+
+    public Task<List<Category>> GetCategoriesAsync(long bookId)
+    {
+        var query = from category in AppDbContext.Categories
+            join bookCategory in AppDbContext.BookCategories on category.Id equals bookCategory.CategoryId
+            where bookCategory.BookId == bookId
+            select category;
+        
+        return query.ToListAsync();
+    }
+
+    public Task<List<Book>> GetBooksByCategoryAsync(int categoryId)
+    {
+        var query = from book in AppDbContext.Books
+            where book.BookCategories.Any(bookCategory => bookCategory.CategoryId == categoryId)
+            select book;
+
+        return query.ToListAsync();
+    }
 }

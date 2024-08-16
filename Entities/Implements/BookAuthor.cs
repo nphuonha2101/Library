@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Dto;
+using Library.Dto.Implements;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Entities.Implements;
@@ -19,4 +21,8 @@ public class BookAuthor : IEntity
 
     [Key] [Column("author_id")] public long AuthorId { get; set; }
     [ForeignKey("AuthorId")] public virtual Author Author { get; set; } = null!;
+    public IDto ToDto()
+    {
+        return new BookAuthorDto(BookId, AuthorId);
+    }
 }

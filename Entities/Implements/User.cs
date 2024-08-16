@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Library.Dto;
+using Library.Dto.Implements;
 using Library.Entities;
 using Library.Entities.Implements;
 
@@ -50,4 +52,9 @@ public class User : IEntity
 
     [JsonIgnore]
     public virtual ICollection<Loan> Loans { get; set; } = new HashSet<Loan>();
+
+    public IDto ToDto()
+    {
+        return new UserDto(FullName, Username, Email, Address, Password, Dob, IsAdmin);
+    }
 }

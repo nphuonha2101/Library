@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Library.Entities;
 
 [Table("categories")]
@@ -16,5 +17,6 @@ public class Category : IEntity
     [Column("description")]
     public string Description { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
 }

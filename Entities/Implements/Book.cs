@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Library.Entities.Implements;
 
@@ -33,6 +34,8 @@ public class Book : IEntity
 
     [Required] [Column("quantity")] public int Quantity { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
+    [JsonIgnore]
     public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
 }

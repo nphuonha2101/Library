@@ -4,15 +4,26 @@ namespace Library.Dto.Implements;
 
 public class UserDto : IDto
 {
-    public string FullName { get; set; } = null!;
-    public string Username { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string Address { get; set; } = null!;
-    public DateTime Dob { get; set; } 
-    public bool IsAdmin { get; set; }
+    private string FullName { get; set; } = null!;
+    private string Username { get; set; } = null!;
+    private string Email { get; set; } = null!;
+    private string Address { get; set; } = null!;
+    private string Password { get; set; } = null!;
+    private DateTime Dob { get; set; }
+    private bool IsAdmin { get; set; }
+
     public IEntity ToEntity()
     {
-        throw new NotImplementedException();
+        return new User
+        (
+            FullName,
+            Username,
+            Email,
+            Password,
+            Dob,
+            Address,
+            IsAdmin
+        );
     }
 
     public (IEntity, List<IEntity>) ToEntities()

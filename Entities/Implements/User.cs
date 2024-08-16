@@ -9,7 +9,8 @@ using Library.Entities.Implements;
 [Table("users")]
 public class User : IEntity
 {
-    public User(string fullName, string username, string email, string password, DateTime dob, string address, bool isAdmin)
+    public User(string fullName, string username, string email, string password, DateTime dob, string address,
+        bool isAdmin)
     {
         FullName = fullName;
         Username = username;
@@ -36,7 +37,7 @@ public class User : IEntity
     [EmailAddress]
     [Column("email")]
     public string Email { get; set; } = null!;
-    
+
     [Required]
     [StringLength(100)]
     [Column("password")]
@@ -50,8 +51,7 @@ public class User : IEntity
 
     [Column("is_admin")] public bool IsAdmin { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<Loan> Loans { get; set; } = new HashSet<Loan>();
+    [JsonIgnore] public virtual ICollection<Loan> Loans { get; set; } = new HashSet<Loan>();
 
     public IDto ToDto()
     {

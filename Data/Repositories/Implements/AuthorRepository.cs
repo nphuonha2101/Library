@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-
 public class AuthorRepository : Repository<Author>, IAuthorRepository
 {
     public AuthorRepository(ApplicationDbContext appDbContext) : base(appDbContext)

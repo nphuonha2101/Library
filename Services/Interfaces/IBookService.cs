@@ -14,5 +14,4 @@ public interface IBookService : IService<Book>
     Book Add(BookDto bookDto);
     List<AuthorDto> GetAuthors(long bookId);
     List<CategoryDto> GetCategories(long bookId);
-    
 }

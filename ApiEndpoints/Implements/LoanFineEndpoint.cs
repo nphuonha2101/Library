@@ -46,7 +46,8 @@ public class LoanFineEndpoint : IEndpoint
 
         // Update loan fine
         apiGroup.MapPut("/loan-fines/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id, [FromForm] LoanFineDto loanFineDto) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id,
+                [FromForm] LoanFineDto loanFineDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (LoanFine)loanFineDto.ToEntity());
@@ -54,11 +55,12 @@ public class LoanFineEndpoint : IEndpoint
             }).WithName("UpdateLoanFine");
 
         // Delete loan fine
-        apiGroup.MapDelete("/loan-fines/{id}", (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id) =>
-        {
-            antiforgery.ValidateRequestAsync(context);
-            var result = service.Delete(id);
-            return result ? Results.Ok("Loan fine deleted.") : Results.BadRequest("Loan fine not deleted.");
-        }).WithName("DeleteLoanFine");
+        apiGroup.MapDelete("/loan-fines/{id}",
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id) =>
+            {
+                antiforgery.ValidateRequestAsync(context);
+                var result = service.Delete(id);
+                return result ? Results.Ok("Loan fine deleted.") : Results.BadRequest("Loan fine not deleted.");
+            }).WithName("DeleteLoanFine");
     }
 }

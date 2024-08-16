@@ -20,6 +20,7 @@ public class BookCategory : IEntity
     [Key] [Column("category_id")] public long CategoryId { get; set; }
     [ForeignKey("BookId")] public virtual Book Book { get; set; } = null!;
     [ForeignKey("CategoryId")] public virtual Category Category { get; set; } = null!;
+
     public IDto ToDto()
     {
         return new BookCategoryDto(BookId, CategoryId);

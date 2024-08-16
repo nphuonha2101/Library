@@ -9,18 +9,24 @@ namespace Library.Entities.Implements;
 [Table("books")]
 public class Book : IEntity
 {
-    public Book(string isbn, string description, DateTime importedDate, int quantity)
+    public Book(string title, string isbn, string description, DateTime importedDate, int quantity)
     {
-        this.Isbn = isbn;
-        this.Description = description;
-        this.ImportedDate = importedDate;
-        this.Quantity = quantity;
+        Title = title;
+        Isbn = isbn;
+        Description = description;
+        ImportedDate = importedDate;
+        Quantity = quantity;
     }
 
     [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; init; }
+
+    [Required]
+    [StringLength(255)]
+    [Column("title")]
+    public string Title { get; set; } = null!;
 
     [Required]
     [StringLength(50)]
@@ -36,19 +42,15 @@ public class Book : IEntity
 
     [Required] [Column("quantity")] public int Quantity { get; set; }
 
-    [JsonIgnore]
-    public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
-    [JsonIgnore]
-    public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
-    
-    [NotMapped]
-    public List<AuthorDto> Authors { get; set; } = new List<AuthorDto>();
-    [NotMapped]
-    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+    [JsonIgnore] public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
+    [JsonIgnore] public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
+
+    [NotMapped] public List<AuthorDto> Authors { get; set; } = new();
+    [NotMapped] public List<CategoryDto> Categories { get; set; } = new();
 
 
     public IDto ToDto()
     {
-        return new BookDto(Isbn, Description, ImportedDate, Quantity);
+        return new BookDto(Title, Isbn, Description, ImportedDate, Quantity);
     }
 }

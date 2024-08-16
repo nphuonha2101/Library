@@ -50,11 +50,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-CSRF-TOKEN"; // 
-    options.Cookie.Name = "XSRF-TOKEN"; 
-    options.Cookie.HttpOnly = false; 
+    options.Cookie.Name = "XSRF-TOKEN";
+    options.Cookie.HttpOnly = false;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
-
 
 
 /*
@@ -107,14 +106,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true"); 
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
     });
     app.UseDeveloperExceptionPage();
 }
+
 // app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
+app.UseAntiforgery();
 // app.UseAuthorization();
 app.Use(async (context, next) =>
 {
@@ -127,15 +128,16 @@ app.Use(async (context, next) =>
         await context.Response.WriteAsync("Token is invalid.");
         return;
     }
+
     await next();
 });
 
 // Apply migrations automatically
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     dbContext.Database.Migrate();
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 /*
  * This following code is the API endpoints configuration.
@@ -163,7 +165,6 @@ userEndpoint.DefineEndpoints(app, apiGroup);
 // loan detail
 var loanDetailEndpoint = new LoanDetailEndpoint();
 loanDetailEndpoint.DefineEndpoints(app, apiGroup);
-
 
 
 // Add authentication endpoints

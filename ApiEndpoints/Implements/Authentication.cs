@@ -20,10 +20,7 @@ public class Authentication : IEndpoint
                 var user = userService.Login(usernameOrEmail, password);
                 var token = user != null ? new BearerToken(configuration).GenerateJwtToken(user) : null;
 
-                if (user != null && token != null)
-                {
-                    return Results.Ok(new { token, user });
-                }
+                if (user != null && token != null) return Results.Ok(new { token, user });
 
                 return Results.Unauthorized();
             }).WithName("Login");

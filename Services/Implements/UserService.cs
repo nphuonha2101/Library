@@ -1,6 +1,5 @@
 using Library.Data.Repositories.Interfaces;
 using Library.Dto.Implements;
-using Library.Entities.Implements;
 using Library.Services.Interfaces;
 
 namespace Library.Services.Implements;
@@ -48,5 +47,4 @@ public class UserService : IUserService
     {
         return _userRepository.AddAsync((User)user.ToEntity()).Result;
     }
-
 }

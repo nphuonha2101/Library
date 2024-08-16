@@ -8,7 +8,7 @@ namespace Library.Utils.Securities;
 public class BearerToken(IConfiguration configuration)
 {
     private readonly IConfiguration configuration = configuration;
-    
+
     /**
      * Generate a JWT token for the user.
      */
@@ -18,9 +18,9 @@ public class BearerToken(IConfiguration configuration)
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: configuration["Jwt:Issuer"],
-            audience: configuration["Jwt:Audience"],
-            claims: new[]
+            configuration["Jwt:Issuer"],
+            configuration["Jwt:Audience"],
+            new[]
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.IsAdmin ? "admin" : "customer"),

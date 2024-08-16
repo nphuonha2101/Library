@@ -7,12 +7,12 @@ namespace Library.Services.Implements;
 public class LoanFineService : ILoanFineService
 {
     private readonly ILoanFineRepository _loanfineRepository;
-    
+
     public LoanFineService(ILoanFineRepository loanfineRepository)
     {
         _loanfineRepository = loanfineRepository;
     }
-    
+
     public List<LoanFine> GetAll()
     {
         return _loanfineRepository.GetAllAsync().Result;

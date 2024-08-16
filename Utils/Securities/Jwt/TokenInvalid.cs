@@ -2,7 +2,7 @@ namespace Library.Utils.Securities.Jwt;
 
 public class TokenInvalid : ITokenInvalid
 {
-    private readonly HashSet<string> _invalidTokens = new HashSet<string>();
+    private readonly HashSet<string> _invalidTokens = new();
 
     /**
      * Add a token to the invalid token list

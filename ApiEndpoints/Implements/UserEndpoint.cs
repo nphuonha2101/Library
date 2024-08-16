@@ -20,10 +20,7 @@ public class UserEndpoint : IEndpoint
         apiGroup.MapGet("/users/{id}/loans", ([FromServices] IUserService service, int id) =>
         {
             var user = service.GetById(id);
-            if (user == null)
-            {
-                return Results.NotFound("User not found.");
-            }
+            if (user == null) return Results.NotFound("User not found.");
 
             var loans = user.Loans;
             return loans.Count > 0 ? Results.Ok(loans) : Results.NotFound("No loans found.");

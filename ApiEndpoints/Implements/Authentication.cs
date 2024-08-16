@@ -2,6 +2,7 @@ using Library.Dto.Implements;
 using Library.Services.Interfaces;
 using Library.Utils.Securities;
 using Library.Utils.Securities.Jwt;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -11,9 +12,11 @@ public class Authentication : IEndpoint
     public void DefineEndpoints(WebApplication application, RouteGroupBuilder apiGroup)
     {
         application.MapPost("/login",
-            ([FromServices] IConfiguration configuration, [FromServices] IUserService userService,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IConfiguration configuration,
+                [FromServices] IUserService userService,
                 [FromForm] string usernameOrEmail, [FromForm] string password) =>
             {
+                antiforgery.ValidateRequestAsync(context);
                 var user = userService.Login(usernameOrEmail, password);
                 var token = user != null ? new BearerToken(configuration).GenerateJwtToken(user) : null;
 
@@ -31,11 +34,16 @@ public class Authentication : IEndpoint
             tokenInvalid.Add(token);
             return Results.Ok("Logout successfully");
         }).WithName("Logout");
-        
-        application.MapPost("/register", ([FromServices] IUserService userService, [FromForm] UserDto userDto) =>
-        {
-            var result = userService.Register(userDto);
-            return result != null ? Results.Created($"/users/{result.Id}", result) : Results.BadRequest("User not registered.");
-        }).WithName("Register");
+
+        application.MapPost("/register",
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService userService,
+                [FromForm] UserDto userDto) =>
+            {
+                antiforgery.ValidateRequestAsync(context);
+                var result = userService.Register(userDto);
+                return result != null
+                    ? Results.Created($"/users/{result.Id}", result)
+                    : Results.BadRequest("User not registered.");
+            }).WithName("Register");
     }
 }

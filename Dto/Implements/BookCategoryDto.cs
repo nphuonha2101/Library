@@ -4,6 +4,12 @@ namespace Library.Dto.Implements;
 
 public class BookCategoryDto: IDto
 {
+    public BookCategoryDto(long bookId, long categoryId)
+    {
+        BookId = bookId;
+        CategoryId = categoryId;
+    }
+
     public long BookId { get; set; }
     public long CategoryId { get; set; }
     public IEntity ToEntity()

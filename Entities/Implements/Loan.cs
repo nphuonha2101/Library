@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Dto;
+using Library.Dto.Implements;
 
 namespace Library.Entities.Implements;
 
@@ -20,4 +22,8 @@ public class Loan : IEntity
 
     [Column("loan_fine_id")] public long LoanFineId;
     [ForeignKey("LoanFineId")] public virtual LoanFine LoanFine { get; set; } = null!;
+    public IDto ToDto()
+    {
+        return new LoanDto(UserId, LoanDate);
+    }
 }

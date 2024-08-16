@@ -1,12 +1,15 @@
 using Library.Data.Repositories.Interfaces;
 using Library.DatabaseContext;
 using Library.Entities.Implements;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-public class LoanFineRepository : Repository<LoanFine>, ILoanFineRepository
+public class LoanFineRepository(ApplicationDbContext appDbContext)
+    : Repository<LoanFine>(appDbContext), ILoanFineRepository
 {
-    public LoanFineRepository(ApplicationDbContext appDbContext) : base(appDbContext)
+    public async Task<LoanFine> GetByLoanIdAsync(int id)
     {
+        return await AppDbContext.LoanFines.FirstAsync(lf => lf.LoanId == id);
     }
 }

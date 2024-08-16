@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Library.Dto;
+using Library.Dto.Implements;
 
 namespace Library.Entities.Implements;
 
@@ -16,4 +18,8 @@ public class LoanFine : IEntity
     [Required] [Column("amount")] public double Amount { get; set; }
     [Required] [Column("create_date")] public DateTime CreateDate { get; set; }
     [Required] [Column("payment_status")] public string PaymentStatus { get; set; } = null!;
+    public IDto ToDto()
+    {
+        return new LoanFineDto(LoanId, Amount, CreateDate, PaymentStatus);
+    }
 }

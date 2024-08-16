@@ -1,10 +1,10 @@
-
+using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
-
 
 public class AuthorEndpoint : IEndpoint
 {
@@ -25,24 +25,34 @@ public class AuthorEndpoint : IEndpoint
         }).WithName("GetAuthorById");
 
         // Add author
-        apiGroup.MapPost("/authors", (IAuthorService service, [FromForm] Author author) =>
-        {
-            var result = service.Add(author);
-            return result != null ? Results.Created($"/authors/{author.Id}", author) : Results.BadRequest("Author not added.");
-        }).WithName("AddAuthor");
+        apiGroup.MapPost("/authors",
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service,
+                [FromForm] AuthorDto authorDto) =>
+            {
+                antiforgery.ValidateRequestAsync(context);
+                var result = service.Add((Author)authorDto.ToEntity());
+                return result != null
+                    ? Results.Created($"/authors/{result.Id}", result)
+                    : Results.BadRequest("Author not added.");
+            }).WithName("AddAuthor");
 
         // Update author
-        apiGroup.MapPut("/authors/{id}", (IAuthorService service, int id, [FromForm] Author author) =>
-        {
-            var result = service.Update(id, author);
-            return result ? Results.Ok(author) : Results.BadRequest("Author not updated.");
-        }).WithName("UpdateAuthor");
+        apiGroup.MapPut("/authors/{id}",
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id,
+                [FromForm] AuthorDto authorDto) =>
+            {
+                antiforgery.ValidateRequestAsync(context);
+                var result = service.Update(id, (Author)authorDto.ToEntity());
+                return result ? Results.Ok(result) : Results.BadRequest("Author not updated.");
+            }).WithName("UpdateAuthor");
 
         // Delete author
-        apiGroup.MapDelete("/authors/{id}", (IAuthorService service, int id) =>
-        {
-            var result = service.Delete(id);
-            return result ? Results.Ok("Author deleted.") : Results.BadRequest("Author not deleted.");
-        }).WithName("DeleteAuthor");
+        apiGroup.MapDelete("/authors/{id}",
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id) =>
+            {
+                antiforgery.ValidateRequestAsync(context);
+                var result = service.Delete(id);
+                return result ? Results.Ok("Author deleted.") : Results.BadRequest("Author not deleted.");
+            }).WithName("DeleteAuthor");
     }
 }

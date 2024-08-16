@@ -1,4 +1,5 @@
 using Library.Data.Repositories.Implements;
+using Library.Entities.Implements;
 
 namespace Library.Data.Repositories.Interfaces;
 

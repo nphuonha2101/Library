@@ -1,5 +1,6 @@
 using Library.Data.Repositories.Interfaces;
 using Library.DatabaseContext;
+using Library.Entities.Implements;
 using Library.Utils.Validations;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,4 +23,5 @@ public class UserRepository : Repository<User>, IUserRepository
 
         return await AppDbContext.Users.FirstAsync(u => u.Username == usernameOrEmail && u.Password == password);
     }
+
 }

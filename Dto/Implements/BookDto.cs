@@ -7,13 +7,15 @@ namespace Library.Dto.Implements;
 
 public class BookDto : IDto
 {
-    public BookDto(string title, string isbn, string description, DateTime importedDate, int quantity)
+    public BookDto(string title, string isbn, string description, DateTime importedDate, int quantity,
+        string? bookImage)
     {
         Title = title;
         Isbn = isbn;
         Description = description;
         ImportedDate = importedDate;
         Quantity = quantity;
+        BookImage = bookImage;
     }
 
     [Required]
@@ -36,6 +38,8 @@ public class BookDto : IDto
     [SwaggerSchema("Số lượng sách")]
     public int Quantity { get; set; }
 
+    [SwaggerSchema("Ảnh sách")] public string? BookImage { get; set; }
+
     [SwaggerSchema("Danh sách id của các thể loại")]
     public List<long>? CategoryIds { get; set; } = new();
 
@@ -45,13 +49,13 @@ public class BookDto : IDto
     public IEntity ToEntity()
     {
         return new Book(
-            Title, Isbn, Description, ImportedDate, Quantity
+            Title, Isbn, Description, ImportedDate, Quantity, BookImage
         );
     }
 
     public (IEntity, List<IEntity>) ToEntities()
     {
-        var book = new Book(Title, Isbn, Description, ImportedDate, Quantity);
+        var book = new Book(Title, Isbn, Description, ImportedDate, Quantity, BookImage);
         var relatedEntities = new List<IEntity>();
 
         if (AuthorIds != null)

@@ -76,14 +76,13 @@ public class BookEndpoint : IEndpoint
                     form["isbn"],
                     form["description"],
                     form["importedDate"].Select(DateTime.Parse).First(),
-                    form["quantity"].Select(int.Parse).First()
+                    form["quantity"].Select(int.Parse).First(),
+                    form["bookImage"]
                 );
 
                 bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(),
                     form["categoryIds[]"].Select(long.Parse).ToList());
                 
-                
-
                 var result = service.Add(bookDto);
                 result.Authors = service.GetAuthors(result.Id);
                 result.Categories = service.GetCategories(result.Id);

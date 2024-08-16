@@ -9,13 +9,15 @@ namespace Library.Entities.Implements;
 [Table("books")]
 public class Book : IEntity
 {
-    public Book(string title, string isbn, string description, DateTime importedDate, int quantity)
+    public Book(string title, string isbn, string description, DateTime importedDate, int quantity, string? bookImage)
     {
         Title = title;
         Isbn = isbn;
         Description = description;
         ImportedDate = importedDate;
         Quantity = quantity;
+        if (bookImage != null)
+            BookImage = bookImage;
     }
 
     [Key]
@@ -41,6 +43,7 @@ public class Book : IEntity
     [Required] [Column("import_date")] public DateTime ImportedDate { get; set; }
 
     [Required] [Column("quantity")] public int Quantity { get; set; }
+    [Column("book_image")] public string BookImage { get; set; } = "default.jpg";
 
     [JsonIgnore] public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
     [JsonIgnore] public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
@@ -51,6 +54,6 @@ public class Book : IEntity
 
     public IDto ToDto()
     {
-        return new BookDto(Title, Isbn, Description, ImportedDate, Quantity);
+        return new BookDto(Title, Isbn, Description, ImportedDate, Quantity, BookImage);
     }
 }

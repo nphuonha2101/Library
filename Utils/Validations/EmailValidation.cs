@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace Library.Utils.Validations;
 
 public class EmailValidation() : AbstractValidation(Pattern)

@@ -9,10 +9,9 @@ public class AntiForgeryEndpoint : IEndpoint
         apiGroup.MapGet("/antiforgery-token", (IAntiforgery antiForgery, HttpContext context) =>
         {
             var tokens = antiForgery.GetAndStoreTokens(context);
-            context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!, new CookieOptions { HttpOnly = false });
             return Results.Ok(new
             {
-                requestToken = tokens.RequestToken, cookieToken = tokens.CookieToken, headerName = tokens.HeaderName
+                requestToken = tokens.RequestToken, headerName = tokens.HeaderName
             });
         }).WithName("GetAntiForgeryToken");
     }

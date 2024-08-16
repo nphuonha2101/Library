@@ -124,6 +124,12 @@ namespace Library.Migrations
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("title");
+
                     b.HasKey("Id");
 
                     b.ToTable("books");

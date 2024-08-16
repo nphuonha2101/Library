@@ -1,8 +1,7 @@
 using Library.Entities.Implements;
 
-namespace Library.Data.Repositories.Interfaces
+namespace Library.Data.Repositories.Interfaces;
+
+public interface ILoanRepository : IRepository<Loan>
 {
-    public interface ILoanRepository : IRepository<Loan>
-    {
-    }
 }

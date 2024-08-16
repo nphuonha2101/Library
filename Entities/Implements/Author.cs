@@ -11,9 +11,9 @@ public class Author : IEntity
 {
     public Author(string fullName, DateTime dob, string description)
     {
-        this.FullName = fullName;
-        this.Dob = (DateTime)dob;
-        this.Description = description;
+        FullName = fullName;
+        Dob = dob;
+        Description = description;
     }
 
     [Key]
@@ -26,20 +26,17 @@ public class Author : IEntity
     [Column("full_name")]
     public string FullName { get; set; } = null!;
 
-    [Required]
-    [Column("dob")] public DateTime Dob { get; set; }
+    [Required] [Column("dob")] public DateTime Dob { get; set; }
 
     [Required]
     [StringLength(255)]
     [Column("description")]
     public string Description { get; set; } = null!;
 
-    [JsonIgnore]
-    public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
+    [JsonIgnore] public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
 
     public IDto ToDto()
     {
         return new AuthorDto(FullName, Dob, Description);
-
     }
 }

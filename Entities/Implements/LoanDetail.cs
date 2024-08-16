@@ -10,6 +10,15 @@ namespace Library.Entities.Implements;
 [PrimaryKey(nameof(LoanId), nameof(BookId))]
 public class LoanDetail : IEntity
 {
+    public LoanDetail(long loanId, long bookId, int quantity, DateTime dueDate, DateTime returnDate)
+    {
+        LoanId = loanId;
+        BookId = bookId;
+        Quantity = quantity;
+        DueDate = dueDate;
+        ReturnDate = returnDate;
+    }
+
     [Key] [Column("loan_id")] public long LoanId { get; set; }
 
     [ForeignKey("LoanId")] public Loan Loan { get; set; } = null!;
@@ -19,6 +28,7 @@ public class LoanDetail : IEntity
     [Required] [Column("quantity")] public int Quantity { get; set; }
     [Required] [Column("due_date")] public DateTime DueDate { get; set; }
     [Required] [Column("return_date")] public DateTime ReturnDate { get; set; }
+
     public IDto ToDto()
     {
         return new LoanDetailDto(LoanId, BookId, Quantity, DueDate, ReturnDate);

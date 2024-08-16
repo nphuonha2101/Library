@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Library.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -11,13 +12,15 @@ public class CategoryDto : IDto
         Description = description;
     }
 
+    [Required]
     [SwaggerSchema("Tên thể loại")]
     public string Name { get; set; } = null!;
-    [SwaggerSchema("Mô tả thể loại")]
-    public string? Description { get; set; }
+
+    [SwaggerSchema("Mô tả thể loại")] public string? Description { get; set; }
+
     public IEntity ToEntity()
     {
-        throw new NotImplementedException();
+        return new Category(Name, Description);
     }
 
     public (IEntity, List<IEntity>) ToEntities()

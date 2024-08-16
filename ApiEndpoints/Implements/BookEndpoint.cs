@@ -2,7 +2,6 @@ using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -65,10 +64,26 @@ public class BookEndpoint : IEndpoint
 
         // Add book
         apiGroup.MapPost("/books",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service,
-                [FromForm] BookDto bookDto) =>
+            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
+
+                var form = context.Request.Form;
+                Console.WriteLine("Form: " + form["title"]);
+                var bookDto = new BookDto
+                (
+                    form["title"],
+                    form["isbn"],
+                    form["description"],
+                    form["importedDate"].Select(DateTime.Parse).First(),
+                    form["quantity"].Select(int.Parse).First()
+                );
+
+                bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(),
+                    form["categoryIds[]"].Select(long.Parse).ToList());
+                
+                
+
                 var result = service.Add(bookDto);
                 result.Authors = service.GetAuthors(result.Id);
                 result.Categories = service.GetCategories(result.Id);

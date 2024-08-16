@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Library.Entities;
 using Library.Entities.Implements;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,19 +14,23 @@ public class AuthorDto : IDto
         Description = description;
     }
 
-    [SwaggerSchema("Tên tác giả")] public string FullName { get; set; } = null!;
+    [Required]
+    [SwaggerSchema("Tên tác giả")]
+    public string FullName { get; set; } = null!;
 
+    [Required]
     [SwaggerSchema("Ngày sinh tác giả")]
     public DateTime Dob { get; set; }
 
+    [Required]
     [SwaggerSchema("Mô tả tác giả")]
     public string Description { get; set; } = null!;
 
     public IEntity ToEntity()
     {
         return new Author(
-            this.FullName,
-            this.Dob,
+            FullName,
+            Dob,
             Description
         );
     }

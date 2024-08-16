@@ -4,6 +4,7 @@ using Library.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240816031644_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,11 +107,6 @@ namespace Library.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("BookImage")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("book_image");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -128,12 +126,6 @@ namespace Library.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("title");
 
                     b.HasKey("Id");
 
@@ -170,7 +162,7 @@ namespace Library.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("loan_date");
 
-                    b.Property<long?>("LoanFineId")
+                    b.Property<long>("LoanFineId")
                         .HasColumnType("bigint")
                         .HasColumnName("loan_fine_id");
 
@@ -343,7 +335,9 @@ namespace Library.Migrations
                 {
                     b.HasOne("Library.Entities.Implements.LoanFine", "LoanFine")
                         .WithOne()
-                        .HasForeignKey("Library.Entities.Implements.Loan", "LoanFineId");
+                        .HasForeignKey("Library.Entities.Implements.Loan", "LoanFineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("User", "User")
                         .WithMany("Loans")

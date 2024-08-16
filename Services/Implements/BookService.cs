@@ -16,6 +16,11 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return bookRepository.GetBooksByAuthorAsync(authorId).Result;
     }
 
+    public List<Book> GetAllByCategory(int categoryId)
+    {
+        return bookRepository.GetBooksByCategoryAsync(categoryId).Result;
+    }
+
     public List<Book> GetAll()
     {
         return bookRepository.GetAllAsync().Result;
@@ -34,6 +39,20 @@ public class BookService(IBookRepository bookRepository) : IBookService
     public Book Add(BookDto dto)
     {
         return bookRepository.AddAsync(dto).Result;
+    }
+
+    public List<AuthorDto> GetAuthors(long bookId)
+    {
+        var authors = bookRepository.GetAuthorsAsync(bookId).Result;
+
+        return authors.Select(author => (AuthorDto)author.ToDto()).ToList();
+    }
+
+    public List<CategoryDto> GetCategories(long bookId)
+    {
+        var categories = bookRepository.GetCategoriesAsync(bookId).Result;
+
+        return categories.Select(category => (CategoryDto)category.ToDto()).ToList();
     }
 
     public bool Update(int id, Book entity)

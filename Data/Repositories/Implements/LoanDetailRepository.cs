@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements
 {
-    public class LoanDetailRepository : Repository<LoanDetail>, ILoanDetailRepository
+    public class LoanDetailRepository(ApplicationDbContext appDbContext)
+        : Repository<LoanDetail>(appDbContext), ILoanDetailRepository
     {
-        public LoanDetailRepository(ApplicationDbContext appDbContext) : base(appDbContext)
+        public async Task<LoanDetail> GetByLoanIdAndBookIdAsync(int loanId, int bookId)
         {
+            return await AppDbContext.LoanDetails.FirstAsync(loanDetail =>
+                loanDetail.LoanId == loanId && loanDetail.BookId == bookId);
         }
     }
 }

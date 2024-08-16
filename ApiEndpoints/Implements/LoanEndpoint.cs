@@ -1,6 +1,8 @@
+using Library.Dto.Implements;
 using Library.Services.Interfaces;
 using Library.Entities.Implements;
 using Library.Services.Implements;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -13,39 +15,49 @@ namespace Library.ApiEndpoints.Implements
         public void DefineEndpoints(WebApplication app, RouteGroupBuilder apiGroup)
         {
             // Get all loans
-            apiGroup.MapGet("/loans", (LoanService service) =>
+            apiGroup.MapGet("/loans", ([FromServices] ILoanService service) =>
             {
                 var loans = service.GetAll();
                 return loans.Count > 0 ? Results.Ok(loans) : Results.NotFound("No loans found.");
             }).WithName("GetAllLoans");
 
             // Get loan by id
-            apiGroup.MapGet("/loans/{id}", (LoanService service, int id) =>
+            apiGroup.MapGet("/loans/{id}", ([FromServices] ILoanService service, int id) =>
             {
                 var loan = service.GetById(id);
                 return loan != null ? Results.Ok(loan) : Results.NotFound("Loan not found.");
             }).WithName("GetLoanById");
 
             // Add loan
-            apiGroup.MapPost("/loans", (LoanService service, [FromForm] Loan loan) =>
-            {
-                var result = service.Add(loan);
-                return result != null ? Results.Created($"/loans/{loan.Id}", loan) : Results.BadRequest("Loan not added.");
-            }).WithName("AddLoan");
+            apiGroup.MapPost("/loans",
+                (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service,
+                    [FromForm] LoanDto loanDto) =>
+                {
+                    antiforgery.ValidateRequestAsync(context);
+                    var result = service.Add((Loan)loanDto.ToEntity());
+                    return result != null
+                        ? Results.Created($"/loans/{result.Id}", result)
+                        : Results.BadRequest("Loan not added.");
+                }).WithName("AddLoan");
 
             // Update loan
-            apiGroup.MapPut("/loans/{id}", (LoanService service, int id, [FromForm] Loan loan) =>
-            {
-                var result = service.Update(id, loan);
-                return result ? Results.Ok(loan) : Results.BadRequest("Loan not updated.");
-            }).WithName("UpdateLoan");
+            apiGroup.MapPut("/loans/{id}",
+                (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id,
+                    [FromForm] LoanDto loanDto) =>
+                {
+                    antiforgery.ValidateRequestAsync(context);
+                    var result = service.Update(id, (Loan)loanDto.ToEntity());
+                    return result ? Results.Ok(result) : Results.BadRequest("Loan not updated.");
+                }).WithName("UpdateLoan");
 
             // Delete loan
-            apiGroup.MapDelete("/loans/{id}", (LoanService service, int id) =>
-            {
-                var result = service.Delete(id);
-                return result ? Results.Ok("Loan deleted.") : Results.BadRequest("Loan not deleted.");
-            }).WithName("DeleteLoan");
+            apiGroup.MapDelete("/loans/{id}",
+                (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id) =>
+                {
+                    antiforgery.ValidateRequestAsync(context);
+                    var result = service.Delete(id);
+                    return result ? Results.Ok("Loan deleted.") : Results.BadRequest("Loan not deleted.");
+                }).WithName("DeleteLoan");
         }
     }
 }

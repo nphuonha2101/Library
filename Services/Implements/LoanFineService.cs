@@ -37,4 +37,9 @@ public class LoanFineService : ILoanFineService
     {
         return _loanfineRepository.DeleteAsync(id).Result;
     }
+
+    public LoanFine GetByLoanId(int id)
+    {
+        return _loanfineRepository.GetByLoanIdAsync(id).Result;
+    }
 }

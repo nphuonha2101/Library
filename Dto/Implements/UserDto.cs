@@ -4,6 +4,17 @@ namespace Library.Dto.Implements;
 
 public class UserDto : IDto
 {
+    public UserDto(string fullName, string username, string email, string address, string password, DateTime dob, bool isAdmin)
+    {
+        FullName = fullName;
+        Username = username;
+        Email = email;
+        Address = address;
+        Password = password;
+        Dob = dob;
+        IsAdmin = isAdmin;
+    }
+
     private string FullName { get; set; } = null!;
     private string Username { get; set; } = null!;
     private string Email { get; set; } = null!;

@@ -65,16 +65,32 @@ builder.Services.AddAntiforgery(options =>
  */
 // builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddSingleton<IConfiguration>(configuration);
-
+// book
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
+// book author
 builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+// book category
 builder.Services.AddScoped<IBookCategoryRepository, BookCategoryRepository>();
+// author
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+// category
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+// loan fine
+builder.Services.AddScoped<ILoanFineService, LoanFineService>();
+builder.Services.AddScoped<ILoanFineRepository, LoanFineRepository>();
+// loan
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+// user
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+// token invalid
+builder.Services.AddScoped<ITokenInvalid, TokenInvalid>();
+// bearer token
 builder.Services.AddScoped<BearerToken>();
-builder.Services.AddSingleton<ITokenInvalid, TokenInvalid>();
-
 
 // builder.Services.AddScoped<IAuthorService, AuthorService>();
 
@@ -115,31 +131,50 @@ app.Use(async (context, next) =>
 });
 
 // Apply migrations automatically
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//     dbContext.Database.Migrate();
+// }
 
 /*
  * This following code is the API endpoints configuration.
  * You can add more endpoints here.
  */
 var apiGroup = app.MapGroup(ApiPrefix.ApiVersion1);
-
+// book
 var bookEndpoint = new BookEndpoint();
 bookEndpoint.DefineEndpoints(app, apiGroup);
+// author
+var authorEndpoint = new AuthorEndpoint();
+authorEndpoint.DefineEndpoints(app, apiGroup);
+// category
+var categoryEndpoint = new CategoryEndpoint();
+categoryEndpoint.DefineEndpoints(app, apiGroup);
+// loan fine
+var loanFineEndpoint = new LoanFineEndpoint();
+loanFineEndpoint.DefineEndpoints(app, apiGroup);
+// loan
+var loanEndpoint = new LoanEndpoint();
+loanEndpoint.DefineEndpoints(app, apiGroup);
+// user
+var userEndpoint = new UserEndpoint();
+userEndpoint.DefineEndpoints(app, apiGroup);
+// loan detail
+var loanDetailEndpoint = new LoanDetailEndpoint();
+loanDetailEndpoint.DefineEndpoints(app, apiGroup);
+
 
 
 // Add authentication endpoints
 // /auth/* (Ex: /auth/login, /auth/logout, /auth/antiforgery-token)
 var authenticateApiGroup = app.MapGroup("/auth");
 
+// antiforgery token
 var antiForgeryEndpoint = new AntiForgeryEndpoint();
 antiForgeryEndpoint.DefineEndpoints(app, authenticateApiGroup);
+// authentication
 var authentication = new Authentication();
 authentication.DefineEndpoints(app, authenticateApiGroup);
-
-
 
 app.Run();

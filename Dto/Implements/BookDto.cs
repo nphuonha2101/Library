@@ -5,6 +5,14 @@ namespace Library.Dto.Implements;
 
 public class BookDto : IDto
 {
+    public BookDto(string isbn, string description, DateTime importedDate, int quantity)
+    {
+        Isbn = isbn;
+        Description = description;
+        ImportedDate = importedDate;
+        Quantity = quantity;
+    }
+
     public string Isbn { get; set; } = null!;
     public string Description { get; set; } = null!;
     public DateTime ImportedDate { get; set; }

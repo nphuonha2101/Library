@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Library.Dto;
+using Library.Dto.Implements;
 
 namespace Library.Entities.Implements;
 
@@ -38,4 +40,15 @@ public class Book : IEntity
     public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
     [JsonIgnore]
     public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
+    
+    [NotMapped]
+    public List<AuthorDto> Authors { get; set; } = new List<AuthorDto>();
+    [NotMapped]
+    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+
+
+    public IDto ToDto()
+    {
+        return new BookDto(Isbn, Description, ImportedDate, Quantity);
+    }
 }

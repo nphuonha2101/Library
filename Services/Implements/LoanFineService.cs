@@ -7,12 +7,12 @@ namespace Library.Services.Implements;
 public class LoanFineService : ILoanFineService
 {
     private readonly ILoanFineRepository _loanfineRepository;
-    
+
     public LoanFineService(ILoanFineRepository loanfineRepository)
     {
         _loanfineRepository = loanfineRepository;
     }
-    
+
     public List<LoanFine> GetAll()
     {
         return _loanfineRepository.GetAllAsync().Result;
@@ -36,5 +36,10 @@ public class LoanFineService : ILoanFineService
     public bool Delete(int id)
     {
         return _loanfineRepository.DeleteAsync(id).Result;
+    }
+
+    public LoanFine GetByLoanId(int id)
+    {
+        return _loanfineRepository.GetByLoanIdAsync(id).Result;
     }
 }

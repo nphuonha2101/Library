@@ -4,4 +4,5 @@ using Library.Entities.Implements;
 
 namespace Library.Data.Repositories.Implements;
 
-public class BookAuthorRepository(ApplicationDbContext appDbContext) : Repository<BookAuthor>(appDbContext), IBookAuthorRepository;
+public class BookAuthorRepository(ApplicationDbContext appDbContext)
+    : Repository<BookAuthor>(appDbContext), IBookAuthorRepository;

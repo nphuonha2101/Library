@@ -1,14 +1,12 @@
 using Library.Data.Repositories.Interfaces;
-using Library.Entities.Implements;
 using Library.DatabaseContext;
-using Microsoft.EntityFrameworkCore;
+using Library.Entities.Implements;
 
-namespace Library.Data.Repositories.Implements
+namespace Library.Data.Repositories.Implements;
+
+public class LoanRepository : Repository<Loan>, ILoanRepository
 {
-    public class LoanRepository : Repository<Loan>, ILoanRepository
+    public LoanRepository(ApplicationDbContext appDbContext) : base(appDbContext)
     {
-        public LoanRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-        {
-        }
     }
 }

@@ -1,14 +1,16 @@
 using Library.Data.Repositories.Interfaces;
-using Library.Entities.Implements;
 using Library.DatabaseContext;
+using Library.Entities.Implements;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.Data.Repositories.Implements
+namespace Library.Data.Repositories.Implements;
+
+public class LoanDetailRepository(ApplicationDbContext appDbContext)
+    : Repository<LoanDetail>(appDbContext), ILoanDetailRepository
 {
-    public class LoanDetailRepository : Repository<LoanDetail>, ILoanDetailRepository
+    public async Task<LoanDetail> GetByLoanIdAndBookIdAsync(int loanId, int bookId)
     {
-        public LoanDetailRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-        {
-        }
+        return await AppDbContext.LoanDetails.FirstAsync(loanDetail =>
+            loanDetail.LoanId == loanId && loanDetail.BookId == bookId);
     }
 }

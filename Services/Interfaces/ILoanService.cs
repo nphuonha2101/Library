@@ -1,8 +1,7 @@
 using Library.Entities.Implements;
 
-namespace Library.Services.Interfaces
+namespace Library.Services.Interfaces;
+
+public interface ILoanService : IService<Loan>
 {
-    public interface ILoanService : IService<Loan>
-    {
-    }
 }

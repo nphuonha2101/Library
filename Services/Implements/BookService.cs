@@ -9,74 +9,59 @@ namespace Library.Services.Implements;
  * Book service
  * Implement IBookRepository
  */
-public class BookService : IBookService
+public class BookService(IBookRepository bookRepository) : IBookService
 {
-    private readonly IBookRepository _bookRepository;
-    private readonly IBookAuthorRepository _bookAuthorRepository;
-    private readonly IBookCategoryRepository _bookCategoryRepository;
-
-    public BookService(IBookRepository bookRepository, IBookAuthorRepository bookAuthorRepository,
-        IBookCategoryRepository bookCategoryRepository)
-    {
-        _bookRepository = bookRepository;
-        _bookAuthorRepository = bookAuthorRepository;
-        _bookCategoryRepository = bookCategoryRepository;
-    }
-
     public List<Book> GetAllByAuthor(int authorId)
     {
-        return _bookRepository.GetBooksByAuthorAsync(authorId).Result;
+        return bookRepository.GetBooksByAuthorAsync(authorId).Result;
+    }
+
+    public List<Book> GetAllByCategory(int categoryId)
+    {
+        return bookRepository.GetBooksByCategoryAsync(categoryId).Result;
     }
 
     public List<Book> GetAll()
     {
-        return _bookRepository.GetAllAsync().Result;
+        return bookRepository.GetAllAsync().Result;
     }
 
     public Book GetById(int id)
     {
-        return _bookRepository.GetByIdAsync(id).Result;
+        return bookRepository.GetByIdAsync(id).Result;
     }
 
     public Book Add(Book entity)
     {
-        return _bookRepository.AddAsync(entity).Result;
+        return bookRepository.AddAsync(entity).Result;
     }
 
     public Book Add(BookDto dto)
     {
-        var (book, intermediateEntities) = dto.ToEntities();
+        return bookRepository.AddAsync(dto).Result;
+    }
 
-        var bookEntity = (Book)book;
+    public List<AuthorDto> GetAuthors(long bookId)
+    {
+        var authors = bookRepository.GetAuthorsAsync(bookId).Result;
 
-        var bookAdded = _bookRepository.AddAsync(bookEntity);
+        return authors.Select(author => (AuthorDto)author.ToDto()).ToList();
+    }
 
-        foreach (var entity in intermediateEntities)
-        {
-            switch (entity)
-            {
-                case BookAuthor bookAuthor:
-                    bookAuthor.BookId = bookEntity.Id;
-                    _bookAuthorRepository.AddAsync(bookAuthor);
-                    break;
+    public List<CategoryDto> GetCategories(long bookId)
+    {
+        var categories = bookRepository.GetCategoriesAsync(bookId).Result;
 
-                case BookCategory bookCategory:
-                    bookCategory.BookId = bookEntity.Id;
-                    _bookCategoryRepository.AddAsync(bookCategory);
-                    break;
-            }
-        }
-
-        return bookEntity;
+        return categories.Select(category => (CategoryDto)category.ToDto()).ToList();
     }
 
     public bool Update(int id, Book entity)
     {
-        return _bookRepository.UpdateAsync(id, entity).Result;
+        return bookRepository.UpdateAsync(id, entity).Result;
     }
 
     public bool Delete(int id)
     {
-        return _bookRepository.DeleteAsync(id).Result;
+        return bookRepository.DeleteAsync(id).Result;
     }
 }

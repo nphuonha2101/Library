@@ -1,5 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using Library.Dto;
+using Library.Dto.Implements;
 
 namespace Library.Entities.Implements;
 
@@ -8,9 +11,9 @@ public class Author : IEntity
 {
     public Author(string fullName, DateTime dob, string description)
     {
-        this.FullName = fullName;
-        this.Dob = (DateTime)dob;
-        this.Description = description;
+        FullName = fullName;
+        Dob = dob;
+        Description = description;
     }
 
     [Key]
@@ -23,13 +26,17 @@ public class Author : IEntity
     [Column("full_name")]
     public string FullName { get; set; } = null!;
 
-    [Required]
-    [Column("dob")] public DateTime Dob { get; set; }
+    [Required] [Column("dob")] public DateTime Dob { get; set; }
 
     [Required]
     [StringLength(255)]
     [Column("description")]
     public string Description { get; set; } = null!;
 
-    public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
+    [JsonIgnore] public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
+
+    public IDto ToDto()
+    {
+        return new AuthorDto(FullName, Dob, Description);
+    }
 }

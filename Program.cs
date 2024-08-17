@@ -113,6 +113,7 @@ if (app.Environment.IsDevelopment())
 
 // app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAntiforgery();

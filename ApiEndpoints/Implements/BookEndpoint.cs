@@ -1,6 +1,10 @@
+using Library.Constants;
 using Library.Dto.Implements;
 using Library.Entities.Implements;
+using Library.Exceptions;
 using Library.Services.Interfaces;
+using Library.Utils.File;
+using Library.Utils.Paths;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,7 +68,8 @@ public class BookEndpoint : IEndpoint
 
         // Add book
         apiGroup.MapPost("/books",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
+            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+                [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
 
@@ -82,7 +87,24 @@ public class BookEndpoint : IEndpoint
 
                 bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(),
                     form["categoryIds[]"].Select(long.Parse).ToList());
-                
+
+                var file = context.Request.Form.Files["file-upload"];
+
+                try
+                {
+                    var host = PathUtils.GetHost(context);
+                    bookDto.BookImage = UploadFile.UploadImage(file,
+                        PathUtils.GetWebRootPath(webHostEnvironment), WwwRootPath.IMAGES, host);
+                }
+                catch (NoFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+                catch (InvalidFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+
                 var result = service.Add(bookDto);
                 result.Authors = service.GetAuthors(result.Id);
                 result.Categories = service.GetCategories(result.Id);
@@ -99,6 +121,22 @@ public class BookEndpoint : IEndpoint
             {
                 await antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (Book)bookDto.ToEntity());
+
+                var file = context.Request.Form.Files["file-upload"];
+
+                // try
+                // {
+                //     var host = PathUtils.GetHost(context);
+                //     bookDto.BookImage = UploadFile.UploadImage(file, WwwRootPath.IMAGES, host);
+                // }
+                // catch (NoFileException e)
+                // {
+                //     return Results.BadRequest(e.Message);
+                // }
+                // catch (InvalidFileException e)
+                // {
+                //     return Results.BadRequest(e.Message);
+                // }
 
                 return result ? Results.Ok(result) : Results.BadRequest("Book not updated.");
             }).WithName("UpdateBook");

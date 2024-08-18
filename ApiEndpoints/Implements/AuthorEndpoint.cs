@@ -2,6 +2,7 @@ using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -26,6 +27,7 @@ public class AuthorEndpoint : IEndpoint
 
         // Add author
         apiGroup.MapPost("/authors",
+            [Authorize(Roles = "admin")]
             (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service,
                 [FromForm] AuthorDto authorDto) =>
             {
@@ -38,6 +40,7 @@ public class AuthorEndpoint : IEndpoint
 
         // Update author
         apiGroup.MapPut("/authors/{id}",
+            [Authorize(Roles = "admin")]
             (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id,
                 [FromForm] AuthorDto authorDto) =>
             {
@@ -48,6 +51,7 @@ public class AuthorEndpoint : IEndpoint
 
         // Delete author
         apiGroup.MapDelete("/authors/{id}",
+            [Authorize(Roles = "admin")]
             (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id) =>
             {
                 antiforgery.ValidateRequestAsync(context);

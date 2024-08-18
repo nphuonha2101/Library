@@ -13,4 +13,9 @@ public class LoanDetailRepository(ApplicationDbContext appDbContext)
         return await AppDbContext.LoanDetails.FirstAsync(loanDetail =>
             loanDetail.LoanId == loanId && loanDetail.BookId == bookId);
     }
+
+    public async Task<LoanDetail> GetByUserIdAsync(int userId)
+    {
+        return await AppDbContext.LoanDetails.FirstAsync(loanDetail => loanDetail.Loan.UserId == userId);
+    }
 }

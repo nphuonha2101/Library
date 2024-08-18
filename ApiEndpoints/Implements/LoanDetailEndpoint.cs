@@ -2,6 +2,7 @@ using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -11,7 +12,7 @@ public class LoanDetailEndpoint : IEndpoint
     public void DefineEndpoints(WebApplication app, RouteGroupBuilder apiGroup)
     {
         // Get all loan details
-        apiGroup.MapGet("/loan-details", ([FromServices] ILoanDetailService service) =>
+        apiGroup.MapGet("/loan-details",[Authorize(Roles = "admin")] ([FromServices] ILoanDetailService service) =>
         {
             var loanDetails = service.GetAll();
             return loanDetails.Count > 0 ? Results.Ok(loanDetails) : Results.NotFound("No loan details found.");
@@ -19,15 +20,23 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Get loan detail by id
         apiGroup.MapGet("/loan-details/by-ids",
-            ([FromServices] ILoanDetailService service, [FromQuery] int bookId, [FromQuery] int loanId) =>
+            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] int bookId, [FromQuery] int loanId) =>
             {
                 var loanDetail = service.GetByLoanIdAndBookId(bookId: bookId, loanId: loanId);
                 return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
             }).WithName("GetLoanDetailById");
+        
+        // Get loan detail by user id
+        apiGroup.MapGet("/loan-details/by-user-id",
+            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] int userId) =>
+            {
+                var loanDetail = service.GetByUserId(userId);
+                return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
+            }).WithName("GetLoanDetailByUserId");
 
         // Add loan detail
         apiGroup.MapPost("/loan-details",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service,
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service,
                 [FromForm] LoanDetailDto loanDetailDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -39,7 +48,7 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Update loan detail
         apiGroup.MapPut("/loan-details/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id,
+           [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id,
                 [FromForm] LoanDetailDto loanDetailDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -49,7 +58,7 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Delete loan detail
         apiGroup.MapDelete("/loan-details/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id) =>
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

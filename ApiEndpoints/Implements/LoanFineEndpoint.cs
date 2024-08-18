@@ -2,6 +2,7 @@ using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -11,21 +12,21 @@ public class LoanFineEndpoint : IEndpoint
     public void DefineEndpoints(WebApplication application, RouteGroupBuilder apiGroup)
     {
         // Get all loan fines
-        apiGroup.MapGet("/loan-fines", ([FromServices] ILoanFineService service) =>
+        apiGroup.MapGet("/loan-fines", [Authorize]  ([FromServices] ILoanFineService service) =>
         {
             var loanFines = service.GetAll();
             return loanFines.Count > 0 ? Results.Ok(loanFines) : Results.NotFound("No loan fines found.");
         }).WithName("GetAllLoanFines");
 
         // Get loan fine by id
-        apiGroup.MapGet("/loan-fines/{id}", ([FromServices] ILoanFineService service, int id) =>
+        apiGroup.MapGet("/loan-fines/{id}", [Authorize]  ([FromServices] ILoanFineService service, int id) =>
         {
             var loanFine = service.GetById(id);
             return loanFine != null ? Results.Ok(loanFine) : Results.NotFound("Loan fine not found.");
         }).WithName("GetLoanFineById");
 
         // Get loan fine by loan id
-        apiGroup.MapGet("/loan-fines/loan/{id}", ([FromServices] ILoanFineService service, int id) =>
+        apiGroup.MapGet("/loan-fines/loan/{id}", [Authorize]  ([FromServices] ILoanFineService service, int id) =>
         {
             var loanFine = service.GetByLoanId(id);
             return loanFine != null ? Results.Ok(loanFine) : Results.NotFound("Loan fine not found.");
@@ -33,7 +34,7 @@ public class LoanFineEndpoint : IEndpoint
 
         // Add loan fine
         apiGroup.MapPost("/loan-fines",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service,
+            [Authorize]  (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service,
                 [FromForm] LoanFineDto loanFineDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -46,7 +47,7 @@ public class LoanFineEndpoint : IEndpoint
 
         // Update loan fine
         apiGroup.MapPut("/loan-fines/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id,
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id,
                 [FromForm] LoanFineDto loanFineDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -56,7 +57,7 @@ public class LoanFineEndpoint : IEndpoint
 
         // Delete loan fine
         apiGroup.MapDelete("/loan-fines/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id) =>
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanFineService service, int id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

@@ -42,4 +42,9 @@ public class LoanDetailService : ILoanDetailService
     {
         return _loanDetailRepository.GetByLoanIdAndBookIdAsync(loanId, bookId).Result;
     }
+    
+    public LoanDetail GetByUserId(int userId)
+    {
+        return _loanDetailRepository.GetByUserIdAsync(userId).Result;
+    }
 }

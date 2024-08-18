@@ -2,6 +2,7 @@ using Library.Dto.Implements;
 using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -64,7 +65,7 @@ public class BookEndpoint : IEndpoint
 
         // Add book
         apiGroup.MapPost("/books",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
+            [Authorize(Roles = "admin")] async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
 
@@ -94,6 +95,7 @@ public class BookEndpoint : IEndpoint
 
         // Update book
         apiGroup.MapPut("/books/{id}",
+            [Authorize(Roles = "admin")]
             async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id,
                 [FromForm] BookDto bookDto) =>
             {
@@ -105,6 +107,7 @@ public class BookEndpoint : IEndpoint
 
         // Delete book
         apiGroup.MapDelete("/books/{id}",
+            [Authorize(Roles = "admin")]
             async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);

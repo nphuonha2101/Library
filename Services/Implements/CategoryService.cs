@@ -12,7 +12,7 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         return _categoryRepository.GetAllAsync().Result;
     }
 
-    public Category GetById(int id)
+    public Category GetById(long id)
     {
         return _categoryRepository.GetByIdAsync(id).Result;
     }
@@ -22,12 +22,12 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         return _categoryRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(int id, Category entity)
+    public bool Update(long id, Category entity)
     {
         return _categoryRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return _categoryRepository.DeleteAsync(id).Result;
     }

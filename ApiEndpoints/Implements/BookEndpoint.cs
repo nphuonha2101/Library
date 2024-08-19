@@ -29,7 +29,7 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetAllBooks");
 
         // Get books by author
-        apiGroup.MapGet("/books/author/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/author/{id}", ([FromServices] IBookService service, long id) =>
         {
             var books = service.GetAllByAuthor(id);
 
@@ -43,7 +43,7 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetBooksByAuthor");
 
         // Get books by category
-        apiGroup.MapGet("/books/category/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/category/{id}", ([FromServices] IBookService service, long id) =>
         {
             var books = service.GetAllByCategory(id);
 
@@ -57,7 +57,7 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetBooksByCategory");
 
         // Get book by id
-        apiGroup.MapGet("/books/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/{id}", ([FromServices] IBookService service, long id) =>
         {
             var book = service.GetById(id);
             book.Authors = service.GetAuthors(book.Id);
@@ -116,34 +116,65 @@ public class BookEndpoint : IEndpoint
 
         // Update book
         apiGroup.MapPut("/books/{id}",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id,
-                [FromForm] BookDto bookDto) =>
+            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+                [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
-                var result = service.Update(id, (Book)bookDto.ToEntity());
+
+                var form = context.Request.Form;
+
+                var title = !string.IsNullOrWhiteSpace(form["title"]) ? form["title"].ToString() : null;
+                var isbn = !string.IsNullOrWhiteSpace(form["isbn"]) ? form["isbn"].ToString() : null;
+                var description = !string.IsNullOrWhiteSpace(form["description"])
+                    ? form["description"].ToString()
+                    : null;
+                var importedDate = !string.IsNullOrWhiteSpace(form["importedDate"])
+                    ? DateTime.Parse(form["importedDate"])
+                    : (DateTime?)null;
+                var quantity = !string.IsNullOrWhiteSpace(form["quantity"]) ? int.Parse(form["quantity"]) : (int?)null;
+                var bookImage = !string.IsNullOrWhiteSpace(form["bookImage"]) ? form["bookImage"].ToString() : null;
+
+                var bookDto = new BookDto(title, isbn, description, importedDate ?? default, quantity ?? default,
+                    bookImage);
+
+                if (!string.IsNullOrWhiteSpace(form["authorIds[]"]))
+                {
+                    bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(), null);
+                }
+
+                if (!string.IsNullOrWhiteSpace(form["categoryIds[]"]))
+                {
+                    bookDto.SetIds(null, form["categoryIds[]"].Select(long.Parse).ToList());
+                }
 
                 var file = context.Request.Form.Files["file-upload"];
 
-                // try
-                // {
-                //     var host = PathUtils.GetHost(context);
-                //     bookDto.BookImage = UploadFile.UploadImage(file, WwwRootPath.IMAGES, host);
-                // }
-                // catch (NoFileException e)
-                // {
-                //     return Results.BadRequest(e.Message);
-                // }
-                // catch (InvalidFileException e)
-                // {
-                //     return Results.BadRequest(e.Message);
-                // }
+                try
+                {
+                    if (file != null && file.Length > 0)
+                    {
+                        var host = PathUtils.GetHost(context);
+                        bookDto.BookImage = UploadFile.UploadImage(file,
+                            PathUtils.GetWebRootPath(webHostEnvironment), WwwRootPath.IMAGES, host);
+                    }
+                }
+                catch (NoFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+                catch (InvalidFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
 
-                return result ? Results.Ok(result) : Results.BadRequest("Book not updated.");
+                var result = service.Update(id, (Book)bookDto.ToEntity());
+
+                return result ? Results.Ok("Book updated.") : Results.BadRequest("Book not updated.");
             }).WithName("UpdateBook");
 
         // Delete book
         apiGroup.MapDelete("/books/{id}",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id) =>
+            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

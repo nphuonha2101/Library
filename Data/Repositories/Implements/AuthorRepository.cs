@@ -16,7 +16,7 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
         return await AppDbContext.Authors.ToListAsync();
     }
 
-    public async Task<Author> GetByIdAsync(int id)
+    public async Task<Author> GetByIdAsync(long id)
     {
         return await AppDbContext.Authors.FindAsync(id);
     }

@@ -18,7 +18,7 @@ public class LoanEndpoint : IEndpoint
         }).WithName("GetAllLoans");
 
         // Get loan by id
-        apiGroup.MapGet("/loans/{id}", ([FromServices] ILoanService service, int id) =>
+        apiGroup.MapGet("/loans/{id}", ([FromServices] ILoanService service, long id) =>
         {
             var loan = service.GetById(id);
             return loan != null ? Results.Ok(loan) : Results.NotFound("Loan not found.");
@@ -38,7 +38,7 @@ public class LoanEndpoint : IEndpoint
 
         // Update loan
         apiGroup.MapPut("/loans/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, long id,
                 [FromForm] LoanDto loanDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -48,7 +48,7 @@ public class LoanEndpoint : IEndpoint
 
         // Delete loan
         apiGroup.MapDelete("/loans/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

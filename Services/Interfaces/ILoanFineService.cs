@@ -4,5 +4,5 @@ namespace Library.Services.Interfaces;
 
 public interface ILoanFineService : IService<LoanFine>
 {
-    LoanFine GetByLoanId(int id);
+    LoanFine GetByLoanId(long id);
 }

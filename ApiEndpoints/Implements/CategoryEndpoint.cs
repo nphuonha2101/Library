@@ -17,7 +17,7 @@ public class CategoryEndpoint : IEndpoint
         }).WithName("GetAllCategories");
 
         // Get category by id
-        apiGroup.MapGet("/categories/{id}", ([FromServices] ICategoryService service, int id) =>
+        apiGroup.MapGet("/categories/{id}", ([FromServices] ICategoryService service, long id) =>
         {
             var category = service.GetById(id);
             return category != null ? Results.Ok(category) : Results.NotFound("Category not found.");
@@ -37,7 +37,7 @@ public class CategoryEndpoint : IEndpoint
 
         // Update category
         apiGroup.MapPut("/categories/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, long id,
                 [FromForm] CategoryDto categoryDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -47,7 +47,7 @@ public class CategoryEndpoint : IEndpoint
 
         // Delete category
         apiGroup.MapDelete("/categories/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

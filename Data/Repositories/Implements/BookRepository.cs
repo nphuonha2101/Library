@@ -18,7 +18,7 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
         _bookCategoryRepository = bookCategoryRepository;
     }
 
-    public async Task<List<Book>> GetBooksByAuthorAsync(int authorId)
+    public async Task<List<Book>> GetBooksByAuthorAsync(long authorId)
     {
         var query = from book in AppDbContext.Books
             where book.BookAuthors.Any(bookAuthor => bookAuthor.AuthorId == authorId)
@@ -72,7 +72,7 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
         return query.ToListAsync();
     }
 
-    public Task<List<Book>> GetBooksByCategoryAsync(int categoryId)
+    public Task<List<Book>> GetBooksByCategoryAsync(long categoryId)
     {
         var query = from book in AppDbContext.Books
             where book.BookCategories.Any(bookCategory => bookCategory.CategoryId == categoryId)

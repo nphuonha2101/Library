@@ -18,7 +18,7 @@ public class AuthorService : IAuthorService
         return _authorRepository.GetAllAsync().Result;
     }
 
-    public Author GetById(int id)
+    public Author GetById(long id)
     {
         return _authorRepository.GetByIdAsync(id).Result;
     }
@@ -28,12 +28,12 @@ public class AuthorService : IAuthorService
         return _authorRepository.AddAsync(author).Result;
     }
 
-    public bool Update(int id, Author author)
+    public bool Update(long id, Author author)
     {
         return _authorRepository.UpdateAsync(id, author).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return _authorRepository.DeleteAsync(id).Result;
     }

@@ -17,7 +17,7 @@ public class UserEndpoint : IEndpoint
         }).WithName("GetAllUsers");
 
         // Get Loan by user
-        apiGroup.MapGet("/users/{id}/loans", ([FromServices] IUserService service, int id) =>
+        apiGroup.MapGet("/users/{id}/loans", ([FromServices] IUserService service, long id) =>
         {
             var user = service.GetById(id);
             if (user == null) return Results.NotFound("User not found.");
@@ -27,7 +27,7 @@ public class UserEndpoint : IEndpoint
         }).WithName("GetLoansByUser");
 
         // Get user by id
-        apiGroup.MapGet("/users/{id}", ([FromServices] IUserService service, int id) =>
+        apiGroup.MapGet("/users/{id}", ([FromServices] IUserService service, long id) =>
         {
             var user = service.GetById(id);
             return user != null ? Results.Ok(user) : Results.NotFound("User not found.");
@@ -35,7 +35,7 @@ public class UserEndpoint : IEndpoint
 
         // Update user
         apiGroup.MapPut("/users/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService service, long id,
                 UserDto userDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -45,7 +45,7 @@ public class UserEndpoint : IEndpoint
 
         // Delete user
         apiGroup.MapDelete("/users/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var deleted = service.Delete(id);

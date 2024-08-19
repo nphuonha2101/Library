@@ -18,7 +18,7 @@ public class LoanDetailService : ILoanDetailService
         return _loanDetailRepository.GetAllAsync().Result;
     }
 
-    public LoanDetail GetById(int id)
+    public LoanDetail GetById(long id)
     {
         throw new NotImplementedException();
     }
@@ -28,17 +28,17 @@ public class LoanDetailService : ILoanDetailService
         return _loanDetailRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(int id, LoanDetail entity)
+    public bool Update(long id, LoanDetail entity)
     {
         return _loanDetailRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return _loanDetailRepository.DeleteAsync(id).Result;
     }
 
-    public LoanDetail GetByLoanIdAndBookId(int loanId, int bookId)
+    public LoanDetail GetByLoanIdAndBookId(long loanId, long bookId)
     {
         return _loanDetailRepository.GetByLoanIdAndBookIdAsync(loanId, bookId).Result;
     }

@@ -27,7 +27,7 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
         return await Entities.ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(int id)
+    public async Task<T> GetByIdAsync(long id)
     {
         var entity = await Entities.FindAsync(id);
         if (entity == null) throw new Exception("Entity not found with id: " + id);
@@ -42,7 +42,7 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
         return entity;
     }
 
-    public async Task<bool> UpdateAsync(int id, T entity)
+    public async Task<bool> UpdateAsync(long id, T entity)
     {
         var existingEntity = await Entities.FindAsync(id);
         if (existingEntity == null)
@@ -53,7 +53,7 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(long id)
     {
         var existingEntity = await Entities.FindAsync(id);
         if (existingEntity == null)

@@ -11,12 +11,12 @@ namespace Library.Services.Implements;
  */
 public class BookService(IBookRepository bookRepository) : IBookService
 {
-    public List<Book> GetAllByAuthor(int authorId)
+    public List<Book> GetAllByAuthor(long authorId)
     {
         return bookRepository.GetBooksByAuthorAsync(authorId).Result;
     }
 
-    public List<Book> GetAllByCategory(int categoryId)
+    public List<Book> GetAllByCategory(long categoryId)
     {
         return bookRepository.GetBooksByCategoryAsync(categoryId).Result;
     }
@@ -26,7 +26,7 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return bookRepository.GetAllAsync().Result;
     }
 
-    public Book GetById(int id)
+    public Book GetById(long id)
     {
         return bookRepository.GetByIdAsync(id).Result;
     }
@@ -55,12 +55,12 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return categories.Select(category => (CategoryDto)category.ToDto()).ToList();
     }
 
-    public bool Update(int id, Book entity)
+    public bool Update(long id, Book entity)
     {
         return bookRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return bookRepository.DeleteAsync(id).Result;
     }

@@ -18,7 +18,7 @@ public class LoanService : ILoanService
         return _loanRepository.GetAllAsync().Result;
     }
 
-    public Loan GetById(int id)
+    public Loan GetById(long id)
     {
         return _loanRepository.GetByIdAsync(id).Result;
     }
@@ -28,12 +28,12 @@ public class LoanService : ILoanService
         return _loanRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(int id, Loan entity)
+    public bool Update(long id, Loan entity)
     {
         return _loanRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return _loanRepository.DeleteAsync(id).Result;
     }

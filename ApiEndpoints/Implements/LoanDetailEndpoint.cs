@@ -19,7 +19,7 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Get loan detail by id
         apiGroup.MapGet("/loan-details/by-ids",
-            ([FromServices] ILoanDetailService service, [FromQuery] int bookId, [FromQuery] int loanId) =>
+            ([FromServices] ILoanDetailService service, [FromQuery] long bookId, [FromQuery] long loanId) =>
             {
                 var loanDetail = service.GetByLoanIdAndBookId(bookId: bookId, loanId: loanId);
                 return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
@@ -39,7 +39,7 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Update loan detail
         apiGroup.MapPut("/loan-details/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, long id,
                 [FromForm] LoanDetailDto loanDetailDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -49,7 +49,7 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Delete loan detail
         apiGroup.MapDelete("/loan-details/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

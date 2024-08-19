@@ -18,7 +18,7 @@ public class UserService : IUserService
         return _userRepository.GetAllAsync().Result;
     }
 
-    public User GetById(int id)
+    public User GetById(long id)
     {
         return _userRepository.GetByIdAsync(id).Result;
     }
@@ -28,12 +28,12 @@ public class UserService : IUserService
         return _userRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(int id, User entity)
+    public bool Update(long id, User entity)
     {
         return _userRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
         return _userRepository.DeleteAsync(id).Result;
     }

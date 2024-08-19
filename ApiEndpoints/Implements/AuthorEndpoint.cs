@@ -18,7 +18,7 @@ public class AuthorEndpoint : IEndpoint
         }).WithName("GetAllAuthors");
 
         // Get author by id
-        apiGroup.MapGet("/authors/{id}", (IAuthorService service, int id) =>
+        apiGroup.MapGet("/authors/{id}", (IAuthorService service, long id) =>
         {
             var author = service.GetById(id);
             return author != null ? Results.Ok(author) : Results.NotFound("Author not found.");
@@ -38,7 +38,7 @@ public class AuthorEndpoint : IEndpoint
 
         // Update author
         apiGroup.MapPut("/authors/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, long id,
                 [FromForm] AuthorDto authorDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -48,7 +48,7 @@ public class AuthorEndpoint : IEndpoint
 
         // Delete author
         apiGroup.MapDelete("/authors/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

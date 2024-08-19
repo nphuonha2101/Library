@@ -15,18 +15,18 @@ public class LoanEndpoint : IEndpoint
         apiGroup.MapGet("/loans",  [Authorize(Roles = "admin")] ([FromServices] ILoanService service) =>
         {
             var loans = service.GetAll();
-            return loans.Count > 0 ? Results.Ok(loans) : Results.NotFound("No loans found.");
+            return loans != null && loans.Count > 0 ? Results.Ok(loans) : Results.NotFound("No loans found.");
         }).WithName("GetAllLoans");
 
         // Get loan by id
-        apiGroup.MapGet("/loans/{id}", [Authorize] ([FromServices] ILoanService service, int id) =>
+        apiGroup.MapGet("/loans/{id}", [Authorize] ([FromServices] ILoanService service, long id) =>
         {
             var loan = service.GetById(id);
             return loan != null ? Results.Ok(loan) : Results.NotFound("Loan not found.");
         }).WithName("GetLoanById");
         
         // Get loan by user id
-        apiGroup.MapGet("/users/{id}/loans", [Authorize] ([FromServices] ILoanService service, int id) =>
+        apiGroup.MapGet("/users/{id}/loans", [Authorize] ([FromServices] ILoanService service, long id) =>
         {
             var loans = service.GetByUserId(id);
             return loans != null ? Results.Ok(loans) : Results.NotFound("Loan not found.");
@@ -46,17 +46,17 @@ public class LoanEndpoint : IEndpoint
 
         // Update loan
         apiGroup.MapPut("/loans/{id}",
-            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id,
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, long id,
                 [FromForm] LoanDto loanDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (Loan)loanDto.ToEntity());
-                return result ? Results.Ok(result) : Results.BadRequest("Loan not updated.");
+                return result != null ? Results.Ok(result) : Results.BadRequest("Loan not updated.");
             }).WithName("UpdateLoan");
 
         // Delete loan
         apiGroup.MapDelete("/loans/{id}",
-            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, int id) =>
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

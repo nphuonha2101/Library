@@ -5,13 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-public class UserRepository : Repository<User>, IUserRepository
+public class UserRepository(ApplicationDbContext appDbContext) : Repository<User>(appDbContext), IUserRepository
 {
-    public UserRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-    {
-    }
-
-    public async Task<User> LoginAsync(string usernameOrEmail, string password)
+    public async Task<User?> LoginAsync(string usernameOrEmail, string password)
     {
         var isEmail = new EmailValidation().IsValid(usernameOrEmail);
 

@@ -4,47 +4,40 @@ using Library.Services.Interfaces;
 
 namespace Library.Services.Implements;
 
-public class LoanDetailService : ILoanDetailService
+public class LoanDetailService(ILoanDetailRepository loanDetailRepository) : ILoanDetailService
 {
-    private readonly ILoanDetailRepository _loanDetailRepository;
-
-    public LoanDetailService(ILoanDetailRepository loanDetailRepository)
+    public List<LoanDetail>? GetAll()
     {
-        _loanDetailRepository = loanDetailRepository;
+        return loanDetailRepository.GetAllAsync().Result;
     }
 
-    public List<LoanDetail> GetAll()
-    {
-        return _loanDetailRepository.GetAllAsync().Result;
-    }
-
-    public LoanDetail GetById(int id)
+    public LoanDetail GetById(long id)
     {
         throw new NotImplementedException();
     }
 
-    public LoanDetail Add(LoanDetail entity)
+    public LoanDetail? Add(LoanDetail entity)
     {
-        return _loanDetailRepository.AddAsync(entity).Result;
+        return loanDetailRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(int id, LoanDetail entity)
+    public LoanDetail? Update(long id, LoanDetail entity)
     {
-        return _loanDetailRepository.UpdateAsync(id, entity).Result;
+        return loanDetailRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Delete(int id)
+    public bool Delete(long id)
     {
-        return _loanDetailRepository.DeleteAsync(id).Result;
+        return loanDetailRepository.DeleteAsync(id).Result;
     }
 
-    public LoanDetail GetByLoanIdAndBookId(int loanId, int bookId)
+    public LoanDetail? GetByLoanIdAndBookId(long loanId, long bookId)
     {
-        return _loanDetailRepository.GetByLoanIdAndBookIdAsync(loanId, bookId).Result;
+        return loanDetailRepository.GetByLoanIdAndBookIdAsync(loanId, bookId).Result;
     }
     
-    public LoanDetail GetByUserId(int userId)
+    public List<LoanDetail>? GetByLoanId(long loanId)
     {
-        return _loanDetailRepository.GetByUserIdAsync(userId).Result;
+        return loanDetailRepository.GetByLoanIdAsync(loanId).Result;
     }
 }

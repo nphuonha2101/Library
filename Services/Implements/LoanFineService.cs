@@ -4,42 +4,35 @@ using Library.Services.Interfaces;
 
 namespace Library.Services.Implements;
 
-public class LoanFineService : ILoanFineService
+public class LoanFineService(ILoanFineRepository loanFineRepository) : ILoanFineService
 {
-    private readonly ILoanFineRepository _loanfineRepository;
-
-    public LoanFineService(ILoanFineRepository loanfineRepository)
+    public List<LoanFine>? GetAll()
     {
-        _loanfineRepository = loanfineRepository;
+        return loanFineRepository.GetAllAsync().Result;
     }
 
-    public List<LoanFine> GetAll()
+    public LoanFine? GetById(long id)
     {
-        return _loanfineRepository.GetAllAsync().Result;
+        return loanFineRepository.GetByIdAsync(id).Result;
     }
 
-    public LoanFine GetById(int id)
+    public LoanFine? Add(LoanFine entity)
     {
-        return _loanfineRepository.GetByIdAsync(id).Result;
+        return loanFineRepository.AddAsync(entity).Result;
     }
 
-    public LoanFine Add(LoanFine entity)
+    public LoanFine? Update(long id, LoanFine entity)
     {
-        return _loanfineRepository.AddAsync(entity).Result;
+        return loanFineRepository.UpdateAsync(id, entity).Result;
     }
 
-    public bool Update(int id, LoanFine entity)
+    public bool Delete(long id)
     {
-        return _loanfineRepository.UpdateAsync(id, entity).Result;
+        return loanFineRepository.DeleteAsync(id).Result;
     }
 
-    public bool Delete(int id)
+    public LoanFine? GetByLoanId(long id)
     {
-        return _loanfineRepository.DeleteAsync(id).Result;
-    }
-
-    public LoanFine GetByLoanId(int id)
-    {
-        return _loanfineRepository.GetByLoanIdAsync(id).Result;
+        return loanFineRepository.GetByLoanIdAsync(id).Result;
     }
 }

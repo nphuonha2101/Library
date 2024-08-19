@@ -8,7 +8,7 @@ namespace Library.Data.Repositories.Implements;
 public class LoanFineRepository(ApplicationDbContext appDbContext)
     : Repository<LoanFine>(appDbContext), ILoanFineRepository
 {
-    public async Task<LoanFine> GetByLoanIdAsync(int id)
+    public async Task<LoanFine?> GetByLoanIdAsync(long id)
     {
         return await AppDbContext.LoanFines.FirstAsync(lf => lf.LoanId == id);
     }

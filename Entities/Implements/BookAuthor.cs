@@ -27,4 +27,9 @@ public class BookAuthor : IEntity
     {
         return new BookAuthorDto(BookId, AuthorId);
     }
+
+    public long GetId()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -39,4 +39,9 @@ public class Author : IEntity
     {
         return new AuthorDto(FullName, Dob, Description);
     }
+
+    public long GetId()
+    {
+        return Id;
+    }
 }

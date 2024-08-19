@@ -4,5 +4,5 @@ namespace Library.Data.Repositories.Interfaces;
 
 public interface ILoanRepository : IRepository<Loan>
 {
-    Task<Loan> GetByUserIdAsync(int userId);
+    Task<List<Loan>?> GetByUserIdAsync(long userId);
 }

@@ -31,4 +31,9 @@ public class LoanFine : IEntity
     {
         return new LoanFineDto(LoanId, Amount, CreateDate, PaymentStatus);
     }
+
+    public long GetId()
+    {
+        return Id;
+    }
 }

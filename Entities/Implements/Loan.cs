@@ -33,4 +33,9 @@ public class Loan : IEntity
     {
         return new LoanDto(UserId, LoanDate, LoanFineId);
     }
+
+    public long GetId()
+    {
+        return Id;
+    }
 }

@@ -157,6 +157,51 @@ namespace Library.Migrations
                     b.ToTable("book_author");
                 });
 
+            modelBuilder.Entity("Library.Entities.Implements.BookReview", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BookId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int")
+                        .HasColumnName("rating");
+
+                    b.Property<string>("Review")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("review");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("title");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("book_reviews");
+                });
+
             modelBuilder.Entity("Library.Entities.Implements.Loan", b =>
                 {
                     b.Property<long>("Id")
@@ -339,6 +384,25 @@ namespace Library.Migrations
                     b.Navigation("Book");
                 });
 
+            modelBuilder.Entity("Library.Entities.Implements.BookReview", b =>
+                {
+                    b.HasOne("Library.Entities.Implements.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("User", "User")
+                        .WithMany("UserBookReviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Library.Entities.Implements.Loan", b =>
                 {
                     b.HasOne("Library.Entities.Implements.LoanFine", "LoanFine")
@@ -406,6 +470,8 @@ namespace Library.Migrations
             modelBuilder.Entity("User", b =>
                 {
                     b.Navigation("Loans");
+
+                    b.Navigation("UserBookReviews");
                 });
 #pragma warning restore 612, 618
         }

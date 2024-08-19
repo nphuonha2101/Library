@@ -26,9 +26,9 @@ public class LoanEndpoint : IEndpoint
         }).WithName("GetLoanById");
         
         // Get loan by user id
-        apiGroup.MapGet("/users/{id}/loans", [Authorize] ([FromServices] ILoanService service, long id) =>
+        apiGroup.MapGet("/users/{userId}/loans", [Authorize] ([FromServices] ILoanService service, long userId) =>
         {
-            var loans = service.GetByUserId(id);
+            var loans = service.GetByUserId(userId);
             return loans != null ? Results.Ok(loans) : Results.NotFound("Loan not found.");
         }).WithName("GetLoansByUserId");
 

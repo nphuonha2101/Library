@@ -32,9 +32,9 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetAllBooks");
 
         // Get books by author
-        apiGroup.MapGet("/books/author/{id}", ([FromServices] IBookService service, long id) =>
+        apiGroup.MapGet("/books/author/{authorId}", ([FromServices] IBookService service, long authorId) =>
         {
-            var books = service.GetAllByAuthor(id);
+            var books = service.GetAllByAuthor(authorId);
 
             if (books != null)
             {
@@ -51,9 +51,9 @@ public class BookEndpoint : IEndpoint
         }).WithName("GetBooksByAuthor");
 
         // Get books by category
-        apiGroup.MapGet("/books/category/{id}", ([FromServices] IBookService service, long id) =>
+        apiGroup.MapGet("/books/category/{categoryId}", ([FromServices] IBookService service, long categoryId) =>
         {
-            var books = service.GetAllByCategory(id);
+            var books = service.GetAllByCategory(categoryId);
 
             if (books != null)
             {
@@ -69,6 +69,25 @@ public class BookEndpoint : IEndpoint
             return Results.NotFound("No books found.");
         }).WithName("GetBooksByCategory");
 
+        // Get books by title
+        apiGroup.MapGet("/books/title/{title}", ([FromServices] IBookService service, string title) =>
+        {
+            var books = service.GetAllByTitle(title);
+
+            if (books != null)
+            {
+                foreach (var book in books)
+                {
+                    book.Authors = service.GetAuthors(book.Id);
+                    book.Categories = service.GetCategories(book.Id);
+                }
+
+                return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
+            }
+
+            return Results.NotFound("No books found.");
+        }).WithName("GetBooksByTitle");
+        
         // Get book by id
         apiGroup.MapGet("/books/{id}", ([FromServices] IBookService service, long id) =>
         {

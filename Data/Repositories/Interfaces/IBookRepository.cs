@@ -11,5 +11,5 @@ public interface IBookRepository : IRepository<Book>
     Task<List<Author>?> GetAuthorsAsync(long bookId);
     Task<List<Category>?> GetCategoriesAsync(long bookId);
     Task<List<Book>?> GetBooksByCategoryAsync(long categoryId);
-    
+    Task<List<Book>?> GetBooksByTitleAsync(string title);
 }

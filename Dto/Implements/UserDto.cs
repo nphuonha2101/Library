@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Library.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,19 +18,26 @@ public class UserDto : IDto
         IsAdmin = isAdmin;
     }
 
-    [SwaggerSchema("Họ và tên")] private string FullName { get; } = null!;
+    [Required]
+    [SwaggerSchema("Họ và tên")] public string FullName { get; } = null!;
 
-    [SwaggerSchema("Tên đăng nhập")] private string Username { get; } = null!;
+    [Required]
+    [SwaggerSchema("Tên đăng nhập")] public string Username { get; } = null!;
 
-    [SwaggerSchema("Email")] private string Email { get; } = null!;
+    [Required]
+    [SwaggerSchema("Email")] public string Email { get; } = null!;
 
-    [SwaggerSchema("Địa chỉ")] private string Address { get; } = null!;
+    [Required]
+    [SwaggerSchema("Địa chỉ")] public string Address { get; } = null!;
 
-    [SwaggerSchema("Mật khẩu")] private string Password { get; } = null!;
+    [Required]
+    [SwaggerSchema("Mật khẩu")] public string Password { get; } = null!;
 
-    [SwaggerSchema("Ngày sinh")] private DateTime Dob { get; }
+    [Required]
+    [SwaggerSchema("Ngày sinh")] public DateTime Dob { get; }
 
-    [SwaggerSchema("Quyền admin")] private bool IsAdmin { get; }
+    [Required]
+    [SwaggerSchema("Quyền admin")] public bool IsAdmin { get; }
 
     public IEntity ToEntity()
     {

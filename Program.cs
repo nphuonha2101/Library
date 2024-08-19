@@ -90,6 +90,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenInvalid, TokenInvalid>();
 // bearer token
 builder.Services.AddScoped<BearerToken>();
+// book review
+builder.Services.AddScoped<IBookReviewService, BookReviewService>();
+builder.Services.AddScoped<IBookReviewRepository, BookReviewRepository>();
 
 // builder.Services.AddScoped<IAuthorService, AuthorService>();
 
@@ -165,7 +168,9 @@ userEndpoint.DefineEndpoints(app, apiGroup);
 // loan detail
 var loanDetailEndpoint = new LoanDetailEndpoint();
 loanDetailEndpoint.DefineEndpoints(app, apiGroup);
-
+// book review
+var bookReviewEndpoint = new BookReviewEndpoint();
+bookReviewEndpoint.DefineEndpoints(app, apiGroup);
 
 // Add authentication endpoints
 // /auth/* (Ex: /auth/login, /auth/logout, /auth/antiforgery-token)

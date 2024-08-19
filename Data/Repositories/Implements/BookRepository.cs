@@ -139,6 +139,11 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
         return await query.ToListAsync();
     }
 
+    public async Task<List<Book>?> GetBooksByTitleAsync(string title)
+    {
+        return await AppDbContext.Books.Where(b => b.Title.Contains(title)).ToListAsync();
+    }
+
     public override async Task<bool> DeleteAsync(long id)
     {
         var existingBook = await Entities

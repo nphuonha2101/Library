@@ -27,11 +27,11 @@ public class LoanDetailEndpoint : IEndpoint
             }).WithName("GetLoanDetailById");
         
         // Get loan detail by loan id
-        apiGroup.MapGet("/loan-details/by-loan-id",
-            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] long userId) =>
+        apiGroup.MapGet("/loan-details/loan/{loanId}",
+            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] long loanId) =>
             {
-                var loanDetail = service.GetByLoanId(userId);
-                return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
+                var loanDetail = service.GetByLoanId(loanId);
+                return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan details not found.");
             }).WithName("GetLoanDetailByUserId");
 
         // Add loan detail

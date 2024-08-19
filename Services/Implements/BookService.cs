@@ -21,6 +21,11 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return bookRepository.GetBooksByCategoryAsync(categoryId).Result;
     }
 
+    public List<Book>? GetAllByTitle(string title)
+    {
+        return bookRepository.GetBooksByTitleAsync(title).Result;
+    }
+
     public List<Book>? GetAll()
     {
         return bookRepository.GetAllAsync().Result;

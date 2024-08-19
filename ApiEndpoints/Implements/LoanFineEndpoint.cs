@@ -26,9 +26,9 @@ public class LoanFineEndpoint : IEndpoint
         }).WithName("GetLoanFineById");
 
         // Get loan fine by loan id
-        apiGroup.MapGet("/loan-fines/loan/{id}", [Authorize]  ([FromServices] ILoanFineService service, long id) =>
+        apiGroup.MapGet("/loan-fines/loan/{loanId}", [Authorize]  ([FromServices] ILoanFineService service, long loanId) =>
         {
-            var loanFine = service.GetByLoanId(id);
+            var loanFine = service.GetByLoanId(loanId);
             return loanFine != null ? Results.Ok(loanFine) : Results.NotFound("Loan fine not found.");
         }).WithName("GetLoanFineByLoanId");
 

@@ -16,17 +16,7 @@ public class UserEndpoint : IEndpoint
             var users = service.GetAll();
             return users != null && users.Count > 0 ? Results.Ok(users) : Results.NotFound("No users found.");
         }).WithName("GetAllUsers");
-
-        // Get Loan by user
-        apiGroup.MapGet("/users/{id}/loans",[Authorize]  ([FromServices] IUserService service, long id) =>
-        {
-            var user = service.GetById(id);
-            if (user == null) return Results.NotFound("User not found.");
-
-            var loans = user.Loans;
-            return loans.Count > 0 ? Results.Ok(loans) : Results.NotFound("No loans found.");
-        }).WithName("GetLoansByUser");
-
+        
         // Get user by id
         apiGroup.MapGet("/users/{id}",  ([FromServices] IUserService service, long id) =>
         {

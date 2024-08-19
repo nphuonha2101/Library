@@ -3,9 +3,5 @@ using Library.DatabaseContext;
 
 namespace Library.Data.Repositories.Implements;
 
-public class CategoryRepository : Repository<Category>, ICategoryRepository
-{
-    public CategoryRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-    {
-    }
-}
+public class CategoryRepository(ApplicationDbContext appDbContext)
+    : Repository<Category>(appDbContext), ICategoryRepository;

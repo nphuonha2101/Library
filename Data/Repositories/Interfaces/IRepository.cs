@@ -8,9 +8,9 @@ namespace Library.Data.Repositories.Interfaces;
  */
 public interface IRepository<T> where T : IEntity
 {
-    Task<List<T>> GetAllAsync();
-    Task<T> GetByIdAsync(int id);
-    Task<T> AddAsync(T entity);
-    Task<bool> UpdateAsync(int id, T entity);
-    Task<bool> DeleteAsync(int id);
+    Task<List<T>?> GetAllAsync();
+    Task<T?> GetByIdAsync(long id);
+    Task<T?> AddAsync(T entity);
+    Task<T?> UpdateAsync(long id, T entity);
+    Task<bool> DeleteAsync(long id);
 }

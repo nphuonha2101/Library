@@ -15,11 +15,11 @@ public class AuthorEndpoint : IEndpoint
         apiGroup.MapGet("/authors", (IAuthorService service) =>
         {
             var authors = service.GetAll();
-            return authors.Count > 0 ? Results.Ok(authors) : Results.NotFound("No authors found.");
+            return authors != null && authors.Count > 0 ? Results.Ok(authors) : Results.NotFound("No authors found.");
         }).WithName("GetAllAuthors");
 
         // Get author by id
-        apiGroup.MapGet("/authors/{id}", (IAuthorService service, int id) =>
+        apiGroup.MapGet("/authors/{id}", (IAuthorService service, long id) =>
         {
             var author = service.GetById(id);
             return author != null ? Results.Ok(author) : Results.NotFound("Author not found.");
@@ -41,18 +41,18 @@ public class AuthorEndpoint : IEndpoint
         // Update author
         apiGroup.MapPut("/authors/{id}",
             [Authorize(Roles = "admin")]
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id,
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, long id,
                 [FromForm] AuthorDto authorDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (Author)authorDto.ToEntity());
-                return result ? Results.Ok(result) : Results.BadRequest("Author not updated.");
+                return result != null ? Results.Ok(result) : Results.BadRequest("Author not updated.");
             }).WithName("UpdateAuthor");
 
         // Delete author
         apiGroup.MapDelete("/authors/{id}",
             [Authorize(Roles = "admin")]
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, int id) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IAuthorService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

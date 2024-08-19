@@ -33,4 +33,9 @@ public class LoanDetail : IEntity
     {
         return new LoanDetailDto(LoanId, BookId, Quantity, DueDate, ReturnDate);
     }
+
+    public long GetId()
+    {
+        throw new NotImplementedException();
+    }
 }

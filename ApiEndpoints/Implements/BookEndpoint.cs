@@ -3,6 +3,7 @@ using Library.Entities.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -16,56 +17,77 @@ public class BookEndpoint : IEndpoint
         {
             var books = service.GetAll();
 
-            foreach (var book in books)
+            if (books != null)
             {
-                book.Authors = service.GetAuthors(book.Id);
-                book.Categories = service.GetCategories(book.Id);
+                foreach (var book in books)
+                {
+                    book.Authors = service.GetAuthors(book.Id);
+                    book.Categories = service.GetCategories(book.Id);
+                }
+
+                return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
             }
 
-            return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
+            return Results.NotFound("No books found.");
         }).WithName("GetAllBooks");
 
         // Get books by author
-        apiGroup.MapGet("/books/author/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/author/{id}", ([FromServices] IBookService service, long id) =>
         {
             var books = service.GetAllByAuthor(id);
 
-            foreach (var book in books)
+            if (books != null)
             {
-                book.Authors = service.GetAuthors(book.Id);
-                book.Categories = service.GetCategories(book.Id);
+                foreach (var book in books)
+                {
+                    book.Authors = service.GetAuthors(book.Id);
+                    book.Categories = service.GetCategories(book.Id);
+                }
+
+                return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
             }
 
-            return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
+            return Results.NotFound("No books found.");
         }).WithName("GetBooksByAuthor");
 
         // Get books by category
-        apiGroup.MapGet("/books/category/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/category/{id}", ([FromServices] IBookService service, long id) =>
         {
             var books = service.GetAllByCategory(id);
 
-            foreach (var book in books)
+            if (books != null)
             {
-                book.Authors = service.GetAuthors(book.Id);
-                book.Categories = service.GetCategories(book.Id);
+                foreach (var book in books)
+                {
+                    book.Authors = service.GetAuthors(book.Id);
+                    book.Categories = service.GetCategories(book.Id);
+                }
+
+                return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
             }
 
-            return books.Count > 0 ? Results.Ok(books) : Results.NotFound("No books found.");
+            return Results.NotFound("No books found.");
         }).WithName("GetBooksByCategory");
 
         // Get book by id
-        apiGroup.MapGet("/books/{id}", ([FromServices] IBookService service, int id) =>
+        apiGroup.MapGet("/books/{id}", ([FromServices] IBookService service, long id) =>
         {
             var book = service.GetById(id);
-            book.Authors = service.GetAuthors(book.Id);
-            book.Categories = service.GetCategories(book.Id);
+            if (book != null)
+            {
+                book.Authors = service.GetAuthors(book.Id);
+                book.Categories = service.GetCategories(book.Id);
 
-            return book != null ? Results.Ok(book) : Results.NotFound("Book not found.");
+                return Results.Ok(book);
+            }
+
+            return Results.NotFound("Book not found.");
         }).WithName("GetBookById");
 
         // Add book
         apiGroup.MapPost("/books",
-            [Authorize(Roles = "admin")] async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
+            [Authorize(Roles = "admin")]
+            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
 
@@ -83,7 +105,7 @@ public class BookEndpoint : IEndpoint
 
                 bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(),
                     form["categoryIds[]"].Select(long.Parse).ToList());
-                
+
                 var result = service.Add(bookDto);
                 result.Authors = service.GetAuthors(result.Id);
                 result.Categories = service.GetCategories(result.Id);
@@ -95,20 +117,20 @@ public class BookEndpoint : IEndpoint
 
         // Update book
         apiGroup.MapPut("/books/{id}",
-            [Authorize(Roles = "admin")]
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id,
+            [Authorize(Roles = "admin")] async (HttpContext context, IAntiforgery antiforgery,
+                [FromServices] IBookService service, long id,
                 [FromForm] BookDto bookDto) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
-                var result = service.Update(id, (Book)bookDto.ToEntity());
+                var result = service.Update(id, bookDto);
 
-                return result ? Results.Ok(result) : Results.BadRequest("Book not updated.");
+                return result != null ? Results.Ok(result) : Results.BadRequest("Book not updated.");
             }).WithName("UpdateBook");
 
         // Delete book
         apiGroup.MapDelete("/books/{id}",
             [Authorize(Roles = "admin")]
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, int id) =>
+            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

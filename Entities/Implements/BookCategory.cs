@@ -25,4 +25,9 @@ public class BookCategory : IEntity
     {
         return new BookCategoryDto(BookId, CategoryId);
     }
+
+    public long GetId()
+    {
+        throw new NotImplementedException();
+    }
 }

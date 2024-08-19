@@ -15,22 +15,22 @@ public class LoanDetailEndpoint : IEndpoint
         apiGroup.MapGet("/loan-details",[Authorize(Roles = "admin")] ([FromServices] ILoanDetailService service) =>
         {
             var loanDetails = service.GetAll();
-            return loanDetails.Count > 0 ? Results.Ok(loanDetails) : Results.NotFound("No loan details found.");
+            return loanDetails != null && loanDetails.Count > 0 ? Results.Ok(loanDetails) : Results.NotFound("No loan details found.");
         }).WithName("GetAllLoanDetails");
 
         // Get loan detail by id
         apiGroup.MapGet("/loan-details/by-ids",
-            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] int bookId, [FromQuery] int loanId) =>
+            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] long bookId, [FromQuery] long loanId) =>
             {
                 var loanDetail = service.GetByLoanIdAndBookId(bookId: bookId, loanId: loanId);
                 return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
             }).WithName("GetLoanDetailById");
         
-        // Get loan detail by user id
-        apiGroup.MapGet("/loan-details/by-user-id",
-            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] int userId) =>
+        // Get loan detail by loan id
+        apiGroup.MapGet("/loan-details/by-loan-id",
+            [Authorize] ([FromServices] ILoanDetailService service, [FromQuery] long userId) =>
             {
-                var loanDetail = service.GetByUserId(userId);
+                var loanDetail = service.GetByLoanId(userId);
                 return loanDetail != null ? Results.Ok(loanDetail) : Results.NotFound("Loan detail not found.");
             }).WithName("GetLoanDetailByUserId");
 
@@ -48,17 +48,17 @@ public class LoanDetailEndpoint : IEndpoint
 
         // Update loan detail
         apiGroup.MapPut("/loan-details/{id}",
-           [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id,
+           [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, long id,
                 [FromForm] LoanDetailDto loanDetailDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (LoanDetail)loanDetailDto.ToEntity());
-                return result ? Results.Ok(result) : Results.BadRequest("Loan detail not updated.");
+                return result != null ? Results.Ok(result) : Results.BadRequest("Loan detail not updated.");
             }).WithName("UpdateLoanDetail");
 
         // Delete loan detail
         apiGroup.MapDelete("/loan-details/{id}",
-            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, int id) =>
+            [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanDetailService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

@@ -8,21 +8,14 @@ namespace Library.Dto.Implements;
 public class BookReviewDto
     : IDto
 {
-    public BookReviewDto(long bookId, long userId, string title, string review, int rating, DateTime? createdAt)
+    public BookReviewDto(long bookId, long userId, string? title = null, string? review = null, int rating = 0, DateTime? createdAt = null)
     {
         BookId = bookId;
         UserId = userId;
-        Title = title;
-        Review = review;
+        Title = title ?? string.Empty;
+        Review = review ?? string.Empty;
         Rating = rating;
-        if (createdAt != null)
-        {
-            CreatedAt = (DateTime)createdAt;
-        }
-        else
-        {
-            CreatedAt = DateTime.Now;
-        }
+        CreatedAt = createdAt ?? DateTime.Now;
     }
 
     [Required]
@@ -38,6 +31,9 @@ public class BookReviewDto
     [Required] [SwaggerSchema("Đánh giá")] public int Rating { get; set; }
     public DateTime CreatedAt { get; set; }
 
+    
+    public Book? Book { get; set; }
+    public User? User { get; set; }
 
     public IEntity ToEntity()
     {

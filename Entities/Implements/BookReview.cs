@@ -9,12 +9,12 @@ namespace Library.Entities.Implements;
 [Table("book_reviews")]
 public class BookReview : IEntity
 {
-    public BookReview(long bookId, long userId, string title, string review, int rating, DateTime createdAt)
+    public BookReview(long bookId, long userId, string? title, string? review, int rating, DateTime createdAt)
     {
         BookId = bookId;
         UserId = userId;
-        Title = title;
-        Review = review;
+        Title = title ?? "";
+        Review = review ?? "";
         Rating = rating;
         CreatedAt = createdAt;
     }
@@ -26,13 +26,12 @@ public class BookReview : IEntity
 
     [Required]
     [Column("book_id")] public long BookId { get; set; }
-    [ForeignKey("BookId")] public virtual Book Book { get; set; }
+    [ForeignKey("BookId")] public virtual Book? Book { get; set; }
 
     [Required]
     [Column("user_id")] public long UserId { get; set; }
-    [ForeignKey("UserId")] public virtual User User { get; set; }
-
-    [Required]
+    [ForeignKey("UserId")] public virtual User? User { get; set; }
+    
     [StringLength(255)]
     [Column("title")]
     public string Title { get; set; }

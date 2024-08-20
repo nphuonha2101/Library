@@ -6,7 +6,7 @@ namespace Library.Dto.Implements;
 
 public class CategoryDto : IDto
 {
-    public CategoryDto(string name, string? description)
+    public CategoryDto(string name, string description)
     {
         Name = name;
         Description = description;
@@ -16,7 +16,9 @@ public class CategoryDto : IDto
     [SwaggerSchema("Tên thể loại")]
     public string Name { get; set; } = null!;
 
-    [SwaggerSchema("Mô tả thể loại")] public string? Description { get; set; }
+    [Required]
+    [SwaggerSchema("Mô tả thể loại")]
+    public string Description { get; set; }
 
     public IEntity ToEntity()
     {

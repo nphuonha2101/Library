@@ -55,6 +55,13 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        corsBuilder => corsBuilder.WithOrigins(["http://localhost:5174", "http://localhost:5173"])
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 /*
  * This following code snippet configures the application to use all services.
@@ -114,8 +121,9 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// app.UseCors("AllowAllOrigins");
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAntiforgery();

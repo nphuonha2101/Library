@@ -1,6 +1,10 @@
+using Library.Constants;
 using Library.Dto.Implements;
 using Library.Entities.Implements;
+using Library.Exceptions;
 using Library.Services.Interfaces;
+using Library.Utils.File;
+using Library.Utils.Paths;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -105,8 +109,8 @@ public class BookEndpoint : IEndpoint
 
         // Add book
         apiGroup.MapPost("/books",
-            [Authorize(Roles = "admin")]
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service) =>
+            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+                [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
 
@@ -125,6 +129,23 @@ public class BookEndpoint : IEndpoint
                 bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(),
                     form["categoryIds[]"].Select(long.Parse).ToList());
 
+                var file = context.Request.Form.Files["file-upload"];
+
+                try
+                {
+                    var host = PathUtils.GetHost(context);
+                    bookDto.BookImage = UploadFile.UploadImage(file,
+                        PathUtils.GetWebRootPath(webHostEnvironment), WwwRootPath.IMAGES, host);
+                }
+                catch (NoFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+                catch (InvalidFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+
                 var result = service.Add(bookDto);
                 result.Authors = service.GetAuthors(result.Id);
                 result.Categories = service.GetCategories(result.Id);
@@ -136,11 +157,57 @@ public class BookEndpoint : IEndpoint
 
         // Update book
         apiGroup.MapPut("/books/{id}",
-            [Authorize(Roles = "admin")] async (HttpContext context, IAntiforgery antiforgery,
-                [FromServices] IBookService service, long id,
-                [FromForm] BookDto bookDto) =>
+            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+                [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
+
+                var form = context.Request.Form;
+
+                var title = !string.IsNullOrWhiteSpace(form["title"]) ? form["title"].ToString() : null;
+                var isbn = !string.IsNullOrWhiteSpace(form["isbn"]) ? form["isbn"].ToString() : null;
+                var description = !string.IsNullOrWhiteSpace(form["description"])
+                    ? form["description"].ToString()
+                    : null;
+                var importedDate = !string.IsNullOrWhiteSpace(form["importedDate"])
+                    ? DateTime.Parse(form["importedDate"])
+                    : (DateTime?)null;
+                var quantity = !string.IsNullOrWhiteSpace(form["quantity"]) ? int.Parse(form["quantity"]) : (int?)null;
+                var bookImage = !string.IsNullOrWhiteSpace(form["bookImage"]) ? form["bookImage"].ToString() : null;
+
+                var bookDto = new BookDto(title, isbn, description, importedDate ?? default, quantity ?? default,
+                    bookImage);
+
+                if (!string.IsNullOrWhiteSpace(form["authorIds[]"]))
+                {
+                    bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(), null);
+                }
+
+                if (!string.IsNullOrWhiteSpace(form["categoryIds[]"]))
+                {
+                    bookDto.SetIds(null, form["categoryIds[]"].Select(long.Parse).ToList());
+                }
+
+                var file = context.Request.Form.Files["file-upload"];
+
+                try
+                {
+                    if (file != null && file.Length > 0)
+                    {
+                        var host = PathUtils.GetHost(context);
+                        bookDto.BookImage = UploadFile.UploadImage(file,
+                            PathUtils.GetWebRootPath(webHostEnvironment), WwwRootPath.IMAGES, host);
+                    }
+                }
+                catch (NoFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+                catch (InvalidFileException e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+
                 var result = service.Update(id, bookDto);
 
                 return result != null ? Results.Ok(result) : Results.BadRequest("Book not updated.");
@@ -148,7 +215,6 @@ public class BookEndpoint : IEndpoint
 
         // Delete book
         apiGroup.MapDelete("/books/{id}",
-            [Authorize(Roles = "admin")]
             async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);

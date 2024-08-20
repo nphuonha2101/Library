@@ -31,4 +31,9 @@ public class Category : IEntity
     {
         return new CategoryDto(Name, Description);
     }
+
+    public long GetId()
+    {
+        return Id;
+    }
 }

@@ -22,7 +22,7 @@ public class LoanFine : IEntity
     public long Id { get; set; }
 
     [Required] [Column("loan_id")] public long LoanId { get; set; }
-    [ForeignKey("LoanId")] public Loan Loan { get; set; } = null!;
+    [ForeignKey("LoanId")] public Loan? Loan { get; set; } = null!;
     [Required] [Column("amount")] public double Amount { get; set; }
     [Required] [Column("create_date")] public DateTime CreateDate { get; set; }
     [Required] [Column("payment_status")] public string PaymentStatus { get; set; } = null!;
@@ -30,5 +30,10 @@ public class LoanFine : IEntity
     public IDto ToDto()
     {
         return new LoanFineDto(LoanId, Amount, CreateDate, PaymentStatus);
+    }
+
+    public long GetId()
+    {
+        return Id;
     }
 }

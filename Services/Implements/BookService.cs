@@ -11,51 +11,61 @@ namespace Library.Services.Implements;
  */
 public class BookService(IBookRepository bookRepository) : IBookService
 {
-    public List<Book> GetAllByAuthor(long authorId)
+    public List<Book>? GetAllByAuthor(long authorId)
     {
         return bookRepository.GetBooksByAuthorAsync(authorId).Result;
     }
 
-    public List<Book> GetAllByCategory(long categoryId)
+    public List<Book>? GetAllByCategory(long categoryId)
     {
         return bookRepository.GetBooksByCategoryAsync(categoryId).Result;
     }
 
-    public List<Book> GetAll()
+    public List<Book>? GetAllByTitle(string title)
+    {
+        return bookRepository.GetBooksByTitleAsync(title).Result;
+    }
+
+    public List<Book>? GetAll()
     {
         return bookRepository.GetAllAsync().Result;
     }
 
-    public Book GetById(long id)
+    public Book? GetById(long id)
     {
         return bookRepository.GetByIdAsync(id).Result;
     }
 
-    public Book Add(Book entity)
+    public Book? Add(Book entity)
     {
         return bookRepository.AddAsync(entity).Result;
     }
 
-    public Book Add(BookDto dto)
+    public Book? Add(BookDto dto)
     {
         return bookRepository.AddAsync(dto).Result;
     }
 
-    public List<AuthorDto> GetAuthors(long bookId)
+    public Book? Update(long id, BookDto bookDto)
+    {
+        return bookRepository.UpdateAsync(id, bookDto).Result;
+    }
+
+    public List<AuthorDto>? GetAuthors(long bookId)
     {
         var authors = bookRepository.GetAuthorsAsync(bookId).Result;
 
-        return authors.Select(author => (AuthorDto)author.ToDto()).ToList();
+        return authors?.Select(author => (AuthorDto)author.ToDto()).ToList();
     }
 
-    public List<CategoryDto> GetCategories(long bookId)
+    public List<CategoryDto>? GetCategories(long bookId)
     {
         var categories = bookRepository.GetCategoriesAsync(bookId).Result;
 
-        return categories.Select(category => (CategoryDto)category.ToDto()).ToList();
+        return categories?.Select(category => (CategoryDto)category.ToDto()).ToList();
     }
 
-    public bool Update(long id, Book entity)
+    public Book? Update(long id, Book entity)
     {
         return bookRepository.UpdateAsync(id, entity).Result;
     }

@@ -23,4 +23,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<LoanDetail> LoanDetails { get; set; }
     public DbSet<LoanFine> LoanFines { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<BookReview> BookReviews { get; set; }
 }

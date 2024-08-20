@@ -11,23 +11,18 @@ namespace Library.Data.Repositories.Implements;
  * This class is used to implement basic CRUD methods
  * Other repositories will inherit from this class
  */
-public abstract class Repository<T> : IRepository<T> where T : class, IEntity
+public abstract class Repository<T>(ApplicationDbContext appDbContext) : IRepository<T>
+    where T : class, IEntity
 {
-    protected readonly ApplicationDbContext AppDbContext;
-    protected readonly DbSet<T> Entities;
+    protected readonly ApplicationDbContext AppDbContext = appDbContext;
+    protected readonly DbSet<T> Entities = appDbContext.Set<T>();
 
-    public Repository(ApplicationDbContext appDbContext)
-    {
-        AppDbContext = appDbContext;
-        Entities = appDbContext.Set<T>();
-    }
-
-    public async Task<List<T>> GetAllAsync()
+    public virtual async Task<List<T>?> GetAllAsync()
     {
         return await Entities.ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(long id)
+    public virtual async Task<T?> GetByIdAsync(long id)
     {
         var entity = await Entities.FindAsync(id);
         if (entity == null) throw new Exception("Entity not found with id: " + id);
@@ -35,25 +30,26 @@ public abstract class Repository<T> : IRepository<T> where T : class, IEntity
         return entity;
     }
 
-    public async Task<T> AddAsync(T entity)
+    public virtual async Task<T?> AddAsync(T entity)
     {
         await Entities.AddAsync(entity);
         await AppDbContext.SaveChangesAsync();
         return entity;
     }
 
-    public async Task<bool> UpdateAsync(long id, T entity)
+    public virtual async Task<T?> UpdateAsync(long id, T entity)
     {
         var existingEntity = await Entities.FindAsync(id);
         if (existingEntity == null)
-            return false;
+            throw new Exception("Entity not found with id: " + id);
 
         AppDbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+        AppDbContext.Entry(existingEntity).Property(e => e.GetId()).IsModified = false;
         await AppDbContext.SaveChangesAsync();
-        return true;
+        return existingEntity;
     }
 
-    public async Task<bool> DeleteAsync(long id)
+    public virtual async Task<bool> DeleteAsync(long id)
     {
         var existingEntity = await Entities.FindAsync(id);
         if (existingEntity == null)

@@ -4,47 +4,40 @@ using Library.Services.Interfaces;
 
 namespace Library.Services.Implements;
 
-public class UserService : IUserService
+public class UserService(IUserRepository userRepository) : IUserService
 {
-    private readonly IUserRepository _userRepository;
-
-    public UserService(IUserRepository userRepository)
+    public List<User>? GetAll()
     {
-        _userRepository = userRepository;
+        return userRepository.GetAllAsync().Result;
     }
 
-    public List<User> GetAll()
+    public User? GetById(long id)
     {
-        return _userRepository.GetAllAsync().Result;
+        return userRepository.GetByIdAsync(id).Result;
     }
 
-    public User GetById(long id)
+    public User? Add(User entity)
     {
-        return _userRepository.GetByIdAsync(id).Result;
+        return userRepository.AddAsync(entity).Result;
     }
 
-    public User Add(User entity)
+    public User? Update(long id, User entity)
     {
-        return _userRepository.AddAsync(entity).Result;
-    }
-
-    public bool Update(long id, User entity)
-    {
-        return _userRepository.UpdateAsync(id, entity).Result;
+        return userRepository.UpdateAsync(id, entity).Result;
     }
 
     public bool Delete(long id)
     {
-        return _userRepository.DeleteAsync(id).Result;
+        return userRepository.DeleteAsync(id).Result;
     }
 
-    public User Login(string usernameOrEmail, string password)
+    public User? Login(string usernameOrEmail, string password)
     {
-        return _userRepository.LoginAsync(usernameOrEmail, password).Result;
+        return userRepository.LoginAsync(usernameOrEmail, password).Result;
     }
 
-    public User Register(UserDto user)
+    public User? Register(UserDto user)
     {
-        return _userRepository.AddAsync((User)user.ToEntity()).Result;
+        return userRepository.AddAsync((User)user.ToEntity()).Result;
     }
 }

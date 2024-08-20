@@ -7,22 +7,22 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
 {
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-    public List<Category> GetAll()
+    public List<Category>? GetAll()
     {
         return _categoryRepository.GetAllAsync().Result;
     }
 
-    public Category GetById(long id)
+    public Category? GetById(long id)
     {
         return _categoryRepository.GetByIdAsync(id).Result;
     }
 
-    public Category Add(Category entity)
+    public Category? Add(Category entity)
     {
         return _categoryRepository.AddAsync(entity).Result;
     }
 
-    public bool Update(long id, Category entity)
+    public Category? Update(long id, Category entity)
     {
         return _categoryRepository.UpdateAsync(id, entity).Result;
     }

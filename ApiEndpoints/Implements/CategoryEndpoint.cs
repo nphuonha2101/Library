@@ -1,6 +1,7 @@
 using Library.Dto.Implements;
 using Library.Services.Interfaces;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
@@ -13,7 +14,7 @@ public class CategoryEndpoint : IEndpoint
         apiGroup.MapGet("/categories", ([FromServices] ICategoryService service) =>
         {
             var categories = service.GetAll();
-            return categories.Count > 0 ? Results.Ok(categories) : Results.NotFound("No categories found.");
+            return categories != null && categories.Count > 0 ? Results.Ok(categories) : Results.NotFound("No categories found.");
         }).WithName("GetAllCategories");
 
         // Get category by id
@@ -25,7 +26,8 @@ public class CategoryEndpoint : IEndpoint
 
         // Add category
         apiGroup.MapPost("/categories",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service,
+            [Authorize(Roles = "admin")](HttpContext context, IAntiforgery antiforgery,
+                [FromServices] ICategoryService service,
                 [FromForm] CategoryDto categoryDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -37,17 +39,19 @@ public class CategoryEndpoint : IEndpoint
 
         // Update category
         apiGroup.MapPut("/categories/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, long id,
+            [Authorize(Roles = "admin")](HttpContext context, IAntiforgery antiforgery,
+                [FromServices] ICategoryService service, long id,
                 [FromForm] CategoryDto categoryDto) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Update(id, (Category)categoryDto.ToEntity());
-                return result ? Results.Ok(categoryDto) : Results.BadRequest("Category not updated.");
+                return result != null ? Results.Ok(categoryDto) : Results.BadRequest("Category not updated.");
             }).WithName("UpdateCategory");
 
         // Delete category
         apiGroup.MapDelete("/categories/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] ICategoryService service, long id) =>
+            [Authorize(Roles = "admin")](HttpContext context, IAntiforgery antiforgery,
+                [FromServices] ICategoryService service, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

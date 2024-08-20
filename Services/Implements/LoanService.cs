@@ -4,37 +4,35 @@ using Library.Services.Interfaces;
 
 namespace Library.Services.Implements;
 
-public class LoanService : ILoanService
+public class LoanService(ILoanRepository loanRepository) : ILoanService
 {
-    private readonly ILoanRepository _loanRepository;
-
-    public LoanService(ILoanRepository loanRepository)
+    public List<Loan>? GetAll()
     {
-        _loanRepository = loanRepository;
+        return loanRepository.GetAllAsync().Result;
     }
 
-    public List<Loan> GetAll()
+    public Loan? GetById(long id)
     {
-        return _loanRepository.GetAllAsync().Result;
+        return loanRepository.GetByIdAsync(id).Result;
     }
 
-    public Loan GetById(long id)
+    public Loan? Add(Loan entity)
     {
-        return _loanRepository.GetByIdAsync(id).Result;
+        return loanRepository.AddAsync(entity).Result;
     }
 
-    public Loan Add(Loan entity)
+    public Loan? Update(long id, Loan entity)
     {
-        return _loanRepository.AddAsync(entity).Result;
-    }
-
-    public bool Update(long id, Loan entity)
-    {
-        return _loanRepository.UpdateAsync(id, entity).Result;
+        return loanRepository.UpdateAsync(id, entity).Result;
     }
 
     public bool Delete(long id)
     {
-        return _loanRepository.DeleteAsync(id).Result;
+        return loanRepository.DeleteAsync(id).Result;
+    }
+    
+    public List<Loan>? GetByUserId(long userId)
+    {
+        return loanRepository.GetByUserIdAsync(userId).Result;
     }
 }

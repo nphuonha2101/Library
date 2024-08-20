@@ -5,19 +5,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories.Implements;
 
-public class AuthorRepository : Repository<Author>, IAuthorRepository
-{
-    public AuthorRepository(ApplicationDbContext appDbContext) : base(appDbContext)
-    {
-    }
-
-    public async Task<List<Author>> GetAllAsync()
-    {
-        return await AppDbContext.Authors.ToListAsync();
-    }
-
-    public async Task<Author> GetByIdAsync(long id)
-    {
-        return await AppDbContext.Authors.FindAsync(id);
-    }
-}
+public class AuthorRepository(ApplicationDbContext appDbContext) : Repository<Author>(appDbContext), IAuthorRepository;

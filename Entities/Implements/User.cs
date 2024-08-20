@@ -52,9 +52,16 @@ public class User : IEntity
     [Column("is_admin")] public bool IsAdmin { get; set; }
 
     [JsonIgnore] public virtual ICollection<Loan> Loans { get; set; } = new HashSet<Loan>();
+    [JsonIgnore]
+    public virtual ICollection<BookReview> UserBookReviews { get; set; } = new HashSet<BookReview>();
 
     public IDto ToDto()
     {
         return new UserDto(FullName, Username, Email, Address, Password, Dob, IsAdmin);
+    }
+
+    public long GetId()
+    {
+        return Id;
     }
 }

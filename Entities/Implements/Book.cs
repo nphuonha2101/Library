@@ -48,12 +48,17 @@ public class Book : IEntity
     [JsonIgnore] public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new HashSet<BookAuthor>();
     [JsonIgnore] public virtual ICollection<BookCategory> BookCategories { get; set; } = new HashSet<BookCategory>();
 
-    [NotMapped] public List<AuthorDto> Authors { get; set; } = new();
-    [NotMapped] public List<CategoryDto> Categories { get; set; } = new();
+    [NotMapped] public List<AuthorDto>? Authors { get; set; } = new();
+    [NotMapped] public List<CategoryDto>? Categories { get; set; } = new();
 
 
     public IDto ToDto()
     {
         return new BookDto(Title, Isbn, Description, ImportedDate, Quantity, BookImage);
+    }
+
+    public long GetId()
+    {
+        return Id;
     }
 }

@@ -9,9 +9,9 @@ namespace Library.Services.Interfaces;
  */
 public interface IService<T>
 {
-    List<T> GetAll();
-    T GetById(long id);
-    T Add(T entity);
-    bool Update(long id, T entity);
+    List<T>? GetAll();
+    T? GetById(long id);
+    T? Add(T entity);
+    T? Update(long id, T entity);
     bool Delete(long id);
 }

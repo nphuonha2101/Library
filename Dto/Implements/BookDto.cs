@@ -69,9 +69,11 @@ public class BookDto : IDto
         return (book, relatedEntities);
     }
 
-    public void SetIds(List<long> authorIds, List<long> categoryIds)
+    public void SetIds(List<long>? authorIds, List<long>? categoryIds)
     {
-        CategoryIds = categoryIds;
-        AuthorIds = authorIds;
+        if (categoryIds != null)
+            AuthorIds = authorIds;
+        if (categoryIds != null)
+            CategoryIds = categoryIds;
     }
 }

@@ -9,11 +9,15 @@ public class UserRepository(ApplicationDbContext appDbContext) : Repository<User
 {
     public async Task<User?> LoginAsync(string usernameOrEmail, string password)
     {
-        var isEmail = new EmailValidation().IsValid(usernameOrEmail);
+        var user = await AppDbContext.Users
+            .Where(u => (u.Username == usernameOrEmail || u.Email == usernameOrEmail) && u.Password == password)
+            .SingleOrDefaultAsync();
 
-        if (isEmail)
-            return await AppDbContext.Users.FirstAsync(u => u.Email == usernameOrEmail && u.Password == password);
+        if (user == null)
+        {
+            throw new InvalidOperationException("Invalid username or password.");
+        }
 
-        return await AppDbContext.Users.FirstAsync(u => u.Username == usernameOrEmail && u.Password == password);
+        return user;
     }
 }

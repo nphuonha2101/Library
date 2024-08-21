@@ -22,6 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+
 
 var configuration = builder.Configuration;
 
@@ -49,10 +53,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAntiforgery(options =>
 {
-    options.HeaderName = "X-CSRF-TOKEN"; // 
+    options.HeaderName = "X-CSRF-TOKEN";
     options.Cookie.Name = "XSRF-TOKEN";
     options.Cookie.HttpOnly = false;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 builder.Services.AddCors(options =>
@@ -144,6 +149,11 @@ app.Use(async (context, next) =>
     await next();
 });
 
+
+// Create logger
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger<AntiForgeryEndpoint>();
+
 // Apply migrations automatically
 using (var scope = app.Services.CreateScope())
 {
@@ -186,10 +196,10 @@ bookReviewEndpoint.DefineEndpoints(app, apiGroup);
 var authenticateApiGroup = app.MapGroup("/auth");
 
 // antiforgery token
-var antiForgeryEndpoint = new AntiForgeryEndpoint();
+var antiForgeryEndpoint = new AntiForgeryEndpoint(logger);
 antiForgeryEndpoint.DefineEndpoints(app, authenticateApiGroup);
 // authentication
-var authentication = new Authentication();
+var authentication = new AuthenticationEndpoint();
 authentication.DefineEndpoints(app, authenticateApiGroup);
 
 app.Run();

@@ -56,6 +56,7 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
     {
         
         var (book, intermediateEntities) = bookDto.ToEntities();
+        
         var existingBook = await Entities
             .Include(b => b.BookAuthors)
             .Include(b => b.BookCategories)
@@ -65,16 +66,31 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
             throw new Exception("Book not found with id: " + id);
 
         // Update main book properties
-        AppDbContext.Entry(existingBook).CurrentValues.SetValues(book);
-        AppDbContext.Entry(existingBook).Property(b => b.Id).IsModified = false;
-
+        // AppDbContext.Entry(existingBook).CurrentValues.SetValues(book);
+        // AppDbContext.Entry(existingBook).Property(b => b.Id).IsModified = false;
+        
+        var bookEntity = (Book)book;
+        
+        existingBook.Title = bookEntity.Title;
+        existingBook.Description = bookEntity.Description;
+        existingBook.Isbn = bookEntity.Isbn;
+        existingBook.ImportedDate = bookEntity.ImportedDate;
+        existingBook.Quantity = bookEntity.Quantity;
+        existingBook.BookImage = bookEntity.BookImage;
+        
         // Update authors
         var newAuthors = intermediateEntities.OfType<BookAuthor>().ToList();
+        foreach (var newAuthor in newAuthors)
+        {
+            newAuthor.BookId = id;
+        }
+        
         foreach (var newAuthor in newAuthors)
         {
             var existingAuthor = existingBook.BookAuthors.FirstOrDefault(ba => ba.AuthorId == newAuthor.AuthorId);
             if (existingAuthor == null)
             {
+                
                 existingBook.BookAuthors.Add(newAuthor);
             }
         }
@@ -89,6 +105,12 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
 
         // Update categories
         var newCategories = intermediateEntities.OfType<BookCategory>().ToList();
+
+        foreach (var newCategory in newCategories)
+        {
+            newCategory.BookId = id;
+        }
+        
         foreach (var newCategory in newCategories)
         {
             var existingCategory = existingBook.BookCategories.FirstOrDefault(bc => bc.CategoryId == newCategory.CategoryId);

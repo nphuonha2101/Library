@@ -8,29 +8,33 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.ApiEndpoints.Implements;
 
-public class Authentication : IEndpoint
+public class AuthenticationEndpoint : IEndpoint
 {
     public void DefineEndpoints(WebApplication application, RouteGroupBuilder apiGroup)
     {
         application.MapPost("/login",
             (HttpContext context, IAntiforgery antiforgery, [FromServices] IConfiguration configuration,
-                [FromServices] IUserService userService,
-                [FromForm] string usernameOrEmail, [FromForm] string password) =>
+                [FromServices] IUserService userService) =>
             {
                 antiforgery.ValidateRequestAsync(context);
+                
+                var form = context.Request.Form;
+                var usernameOrEmail = form["usernameOrEmail"].ToString();
+                var password = form["password"].ToString();
+                
                 var isEmail = new EmailValidation().IsValid(usernameOrEmail);
                 var isUsername = new UsernameValidation().IsValid(usernameOrEmail);
                 var isPasswordValid = new PasswordValidation().IsValid(password);
 
-                if (!isEmail && !isUsername)
-                {
-                    return Results.BadRequest("Username or email is invalid.");
-                }
+                // if (!isEmail || !isUsername)
+                // {
+                //     return Results.BadRequest("Username or email is invalid: " + usernameOrEmail);
+                // }
 
-                if (!isPasswordValid)
-                {
-                    return Results.BadRequest("Password is invalid.");
-                }
+                // if (!isPasswordValid)
+                // {
+                //     return Results.BadRequest("Password is invalid.");
+                // }
                 var user = userService.Login(usernameOrEmail, password);
                 var token = user != null ? new BearerToken(configuration).GenerateJwtToken(user) : null;
 
@@ -47,10 +51,19 @@ public class Authentication : IEndpoint
         }).WithName("Logout");
 
         application.MapPost("/register",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService userService,
-                [FromForm] string fullName, [FromForm] string username, [FromForm] string email,
-                [FromForm] string address, [FromForm] string password, [FromForm] DateTime dob) =>
+            (HttpContext context, IAntiforgery antiforgery, [FromServices] IUserService userService) =>
             {
+                var form = context.Request.Form;
+                
+                var fullName = form["fullName"].ToString();
+                var username = form["username"].ToString();
+                var email = form["email"].ToString();
+                var address = form["address"].ToString();
+                var password = form["password"].ToString();
+                var dob = form.ContainsKey("dob") && DateTime.TryParse(form["dob"], out var parsedDate)
+                    ? parsedDate
+                    : DateTime.Now;
+                
                 antiforgery.ValidateRequestAsync(context);
                 var isEmailValid = new EmailValidation().IsValid(email);
                 var isUsernameValid = new UsernameValidation().IsValid(username);

@@ -182,7 +182,7 @@ public class BookEndpoint : IEndpoint
                 {
                     bookDto.SetIds(form["authorIds[]"].Select(long.Parse).ToList(), null);
                 }
-
+                    
                 if (!string.IsNullOrWhiteSpace(form["categoryIds[]"]))
                 {
                     bookDto.SetIds(null, form["categoryIds[]"].Select(long.Parse).ToList());

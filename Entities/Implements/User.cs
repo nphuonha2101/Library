@@ -38,6 +38,7 @@ public class User : IEntity
     [Column("email")]
     public string Email { get; set; } = null!;
 
+    [JsonIgnore]
     [Required]
     [StringLength(100)]
     [Column("password")]

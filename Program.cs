@@ -58,9 +58,10 @@ builder.Services.AddAntiforgery(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        corsBuilder => corsBuilder.WithOrigins(["http://localhost:5174", "http://localhost:5173"])
+        corsBuilder => corsBuilder.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
 /*

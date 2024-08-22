@@ -243,9 +243,12 @@ namespace Library.Migrations
 
             modelBuilder.Entity("Library.Entities.Implements.LoanDetail", b =>
                 {
-                    b.Property<long>("LoanId")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
-                        .HasColumnName("loan_id");
+                        .HasColumnName("id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("BookId")
                         .HasColumnType("bigint")
@@ -255,13 +258,23 @@ namespace Library.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("due_date");
 
+                    b.Property<long>("LoanId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("loan_id");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
-                    b.HasKey("LoanId", "BookId");
+                    b.Property<DateTime?>("ReturnDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("return_date");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("BookId");
+
+                    b.HasIndex("LoanId");
 
                     b.ToTable("loan_details");
                 });

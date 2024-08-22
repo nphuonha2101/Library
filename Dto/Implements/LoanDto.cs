@@ -7,11 +7,10 @@ namespace Library.Dto.Implements;
 
 public class LoanDto : IDto
 {
-    public LoanDto(long userId, DateTime loanDate, long? loanFineId, DateTime dueDate, DateTime? returnDate)
+    public LoanDto(long userId, DateTime loanDate, DateTime dueDate, DateTime? returnDate)
     {
         UserId = userId;
         LoanDate = loanDate;
-        LoanFineId = loanFineId;
         DueDate = dueDate;
         if (returnDate != null) ReturnDate = returnDate;
     }

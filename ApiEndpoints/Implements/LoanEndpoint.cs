@@ -35,10 +35,19 @@ public class LoanEndpoint : IEndpoint
         // Add loan
         apiGroup.MapPost("/loans",
             [Authorize](HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service,
-                [FromServices] ILoanFineService loanFineService, [FromServices] IUserService userService,
-                [FromForm] LoanDto loanDto) =>
+                [FromServices] ILoanFineService loanFineService, [FromServices] IUserService userService) =>
             {
                 antiforgery.ValidateRequestAsync(context);
+                
+                var form = context.Request.Form;
+
+                var loanDto = new LoanDto(
+                    long.Parse(form["userId"].ToString()),
+                    DateTime.Parse(form["loanDate"].ToString()),
+                    DateTime.Parse(form["dueDate"].ToString()),
+                    form["returnDate"].ToString() != "" ? DateTime.Parse(form["returnDate"].ToString()) : null
+                );
+                
                 var result = service.Add((Loan)loanDto.ToEntity());
 
                 if (result != null)
@@ -62,10 +71,20 @@ public class LoanEndpoint : IEndpoint
         // Update loan
         apiGroup.MapPut("/loans/{id}",
             [Authorize](HttpContext context, IAntiforgery antiforgery, [FromServices] ILoanService service
-                , [FromServices] ILoanFineService loanFineService, [FromServices] IUserService userService , long id,
-                [FromForm] LoanDto loanDto) =>
+                , [FromServices] ILoanFineService loanFineService, [FromServices] IUserService userService , long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
+                
+                var form = context.Request.Form;
+                
+                var loanDto = new LoanDto(
+                    long.Parse(form["userId"].ToString()),
+                    DateTime.Parse(form["loanDate"].ToString()),
+                    DateTime.Parse(form["dueDate"].ToString()),
+                    form["returnDate"].ToString() != "" ? DateTime.Parse(form["returnDate"].ToString()) : null
+                );
+
+                
                 var result = service.Update(id, (Loan)loanDto.ToEntity());
                 
                 if (result != null)

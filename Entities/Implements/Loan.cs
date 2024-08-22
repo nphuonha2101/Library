@@ -39,7 +39,7 @@ public class Loan : IEntity
 
     public IDto ToDto()
     {
-        return new LoanDto(UserId, LoanDate, LoanFineId, DueDate, ReturnDate);
+        return new LoanDto(UserId, LoanDate, DueDate, ReturnDate);
     }
 
     public long GetId()

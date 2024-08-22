@@ -9,6 +9,8 @@ public class UserRepository(ApplicationDbContext appDbContext) : Repository<User
 {
     public async Task<User?> LoginAsync(string usernameOrEmail, string password)
     {
+        
+        
         var user = await AppDbContext.Users
             .Where(u => (u.Username == usernameOrEmail || u.Email == usernameOrEmail) && u.Password == password)
             .SingleOrDefaultAsync();

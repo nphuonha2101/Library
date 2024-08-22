@@ -7,11 +7,12 @@ namespace Library.Dto.Implements;
 
 public class LoanDetailDto : IDto
 {
-    public LoanDetailDto(long loanId, long bookId, int quantity)
+    public LoanDetailDto(long loanId, long bookId, int quantity, DateTime dueDate)
     {
         LoanId = loanId;
         BookId = bookId;
         Quantity = quantity;
+        DueDate = dueDate;
     }
 
     [Required]
@@ -29,14 +30,13 @@ public class LoanDetailDto : IDto
     [Required]
     [SwaggerSchema("Ngày hết hạn")]
     public DateTime DueDate { get; set; }
-
-    [Required]
+    
     [SwaggerSchema("Ngày trả sách")]
     public DateTime ReturnDate { get; set; }
 
     public IEntity ToEntity()
     {
-        return new LoanDetail(LoanId, BookId, Quantity);
+        return new LoanDetail(LoanId, BookId, Quantity, DueDate);
     }
 
     public (IEntity, List<IEntity>) ToEntities()

@@ -51,6 +51,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization();
+
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-CSRF-TOKEN";
@@ -106,6 +108,9 @@ builder.Services.AddScoped<BearerToken>();
 // book review
 builder.Services.AddScoped<IBookReviewService, BookReviewService>();
 builder.Services.AddScoped<IBookReviewRepository, BookReviewRepository>();
+// loan detail
+builder.Services.AddScoped<ILoanDetailService, LoanDetailService>();
+builder.Services.AddScoped<ILoanDetailRepository, LoanDetailRepository>();
 
 // builder.Services.AddScoped<IAuthorService, AuthorService>();
 
@@ -133,7 +138,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAntiforgery();
-// app.UseAuthorization();
+app.UseAuthorization();
 app.Use(async (context, next) =>
 {
     var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");

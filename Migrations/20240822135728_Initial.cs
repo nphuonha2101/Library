@@ -39,12 +39,16 @@ namespace Library.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    title = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     isbn = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     import_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    quantity = table.Column<int>(type: "int", nullable: false)
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    book_image = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -145,6 +149,39 @@ namespace Library.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "book_reviews",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    book_id = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    title = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    review = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    rating = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_book_reviews", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_book_reviews_books_book_id",
+                        column: x => x.book_id,
+                        principalTable: "books",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_book_reviews_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "fines",
                 columns: table => new
                 {
@@ -170,7 +207,9 @@ namespace Library.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     user_id = table.Column<long>(type: "bigint", nullable: false),
                     loan_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    loan_fine_id = table.Column<long>(type: "bigint", nullable: false)
+                    due_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    return_date = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    loan_fine_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -179,8 +218,7 @@ namespace Library.Migrations
                         name: "FK_loans_fines_loan_fine_id",
                         column: x => x.loan_fine_id,
                         principalTable: "fines",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_loans_users_user_id",
                         column: x => x.user_id,
@@ -194,15 +232,16 @@ namespace Library.Migrations
                 name: "loan_details",
                 columns: table => new
                 {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     loan_id = table.Column<long>(type: "bigint", nullable: false),
                     book_id = table.Column<long>(type: "bigint", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
-                    due_date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    return_date = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    due_date = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_loan_details", x => new { x.loan_id, x.book_id });
+                    table.PrimaryKey("PK_loan_details", x => x.id);
                     table.ForeignKey(
                         name: "FK_loan_details_books_book_id",
                         column: x => x.book_id,
@@ -229,6 +268,16 @@ namespace Library.Migrations
                 column: "category_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_book_reviews_book_id",
+                table: "book_reviews",
+                column: "book_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_book_reviews_user_id",
+                table: "book_reviews",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_fines_loan_id",
                 table: "fines",
                 column: "loan_id");
@@ -237,6 +286,11 @@ namespace Library.Migrations
                 name: "IX_loan_details_book_id",
                 table: "loan_details",
                 column: "book_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_loan_details_loan_id",
+                table: "loan_details",
+                column: "loan_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_loans_loan_fine_id",
@@ -262,6 +316,10 @@ namespace Library.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_loans_users_user_id",
+                table: "loans");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_fines_loans_loan_id",
                 table: "fines");
 
@@ -270,6 +328,9 @@ namespace Library.Migrations
 
             migrationBuilder.DropTable(
                 name: "book_category");
+
+            migrationBuilder.DropTable(
+                name: "book_reviews");
 
             migrationBuilder.DropTable(
                 name: "loan_details");
@@ -284,13 +345,13 @@ namespace Library.Migrations
                 name: "books");
 
             migrationBuilder.DropTable(
+                name: "users");
+
+            migrationBuilder.DropTable(
                 name: "loans");
 
             migrationBuilder.DropTable(
                 name: "fines");
-
-            migrationBuilder.DropTable(
-                name: "users");
         }
     }
 }

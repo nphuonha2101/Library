@@ -92,7 +92,7 @@ public class BookReviewEndpoint : IEndpoint
 
         // Add book review
         apiGroup.MapPost("/book-reviews",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService service,
+          [Authorize]  (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService service,
                 [FromServices] IBookService bookService, [FromServices] IUserService userService) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -125,7 +125,7 @@ public class BookReviewEndpoint : IEndpoint
 
         // Update book review
         apiGroup.MapPut("/book-reviews/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService bookReviewService,
+          [Authorize]  (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService bookReviewService,
                 [FromServices] IBookService bookService, [FromServices] IUserService userService, long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);
@@ -158,7 +158,7 @@ public class BookReviewEndpoint : IEndpoint
 
         // Delete book review
         apiGroup.MapDelete("/book-reviews/{id}",
-            (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService bookReviewService,
+           [Authorize] (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookReviewService bookReviewService,
                 long id) =>
             {
                 antiforgery.ValidateRequestAsync(context);

@@ -109,7 +109,7 @@ public class BookEndpoint : IEndpoint
 
         // Add book
         apiGroup.MapPost("/books",
-            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+          [Authorize]  async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
                 [FromServices] IBookService service) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
@@ -157,7 +157,7 @@ public class BookEndpoint : IEndpoint
 
         // Update book
         apiGroup.MapPut("/books/{id}",
-            async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
+           [Authorize] async (IWebHostEnvironment webHostEnvironment, HttpContext context, IAntiforgery antiforgery,
                 [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
@@ -215,7 +215,7 @@ public class BookEndpoint : IEndpoint
 
         // Delete book
         apiGroup.MapDelete("/books/{id}",
-            async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, long id) =>
+          [Authorize]  async (HttpContext context, IAntiforgery antiforgery, [FromServices] IBookService service, long id) =>
             {
                 await antiforgery.ValidateRequestAsync(context);
                 var result = service.Delete(id);

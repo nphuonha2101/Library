@@ -14,6 +14,6 @@ public interface IBookService : IService<Book>
     List<Book>? GetAllByTitle(string title);
     Book? Add(BookDto bookDto);
     Book? Update(long id, BookDto bookDto);
-    List<AuthorDto>? GetAuthors(long bookId);
-    List<CategoryDto>? GetCategories(long bookId);
+    List<Author>? GetAuthors(long bookId);
+    List<Category>? GetCategories(long bookId);
 }

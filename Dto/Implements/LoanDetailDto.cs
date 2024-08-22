@@ -7,13 +7,11 @@ namespace Library.Dto.Implements;
 
 public class LoanDetailDto : IDto
 {
-    public LoanDetailDto(long loanId, long bookId, int quantity, DateTime dueDate, DateTime returnDate)
+    public LoanDetailDto(long loanId, long bookId, int quantity)
     {
         LoanId = loanId;
         BookId = bookId;
         Quantity = quantity;
-        DueDate = dueDate;
-        ReturnDate = returnDate;
     }
 
     [Required]
@@ -38,7 +36,7 @@ public class LoanDetailDto : IDto
 
     public IEntity ToEntity()
     {
-        return new LoanDetail(LoanId, BookId, Quantity, DueDate, ReturnDate);
+        return new LoanDetail(LoanId, BookId, Quantity);
     }
 
     public (IEntity, List<IEntity>) ToEntities()

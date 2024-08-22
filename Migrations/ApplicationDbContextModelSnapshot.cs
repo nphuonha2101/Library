@@ -211,6 +211,10 @@ namespace Library.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("due_date");
+
                     b.Property<DateTime>("LoanDate")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("loan_date");
@@ -218,6 +222,10 @@ namespace Library.Migrations
                     b.Property<long?>("LoanFineId")
                         .HasColumnType("bigint")
                         .HasColumnName("loan_fine_id");
+
+                    b.Property<DateTime?>("ReturnDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("return_date");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
@@ -250,10 +258,6 @@ namespace Library.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("return_date");
 
                     b.HasKey("LoanId", "BookId");
 

@@ -51,18 +51,15 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return bookRepository.UpdateAsync(id, bookDto).Result;
     }
 
-    public List<AuthorDto>? GetAuthors(long bookId)
+    public List<Author>? GetAuthors(long bookId)
     {
-        var authors = bookRepository.GetAuthorsAsync(bookId).Result;
-
-        return authors?.Select(author => (AuthorDto)author.ToDto()).ToList();
+        return bookRepository.GetAuthorsAsync(bookId).Result;
+        
     }
 
-    public List<CategoryDto>? GetCategories(long bookId)
+    public List<Category>? GetCategories(long bookId)
     {
-        var categories = bookRepository.GetCategoriesAsync(bookId).Result;
-
-        return categories?.Select(category => (CategoryDto)category.ToDto()).ToList();
+        return bookRepository.GetCategoriesAsync(bookId).Result;
     }
 
     public Book? Update(long id, Book entity)

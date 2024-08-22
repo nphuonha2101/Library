@@ -26,20 +26,31 @@ public class AuthenticationEndpoint : IEndpoint
                 var isUsername = new UsernameValidation().IsValid(usernameOrEmail);
                 var isPasswordValid = new PasswordValidation().IsValid(password);
 
-                // if (!isEmail || !isUsername)
-                // {
-                //     return Results.BadRequest("Username or email is invalid: " + usernameOrEmail);
-                // }
+                if (!isEmail)
+                {
+                    if(!isUsername)
+                    {
+                        return Results.BadRequest("Username or Email is invalid.");
+                    }
+                }
 
-                // if (!isPasswordValid)
-                // {
-                //     return Results.BadRequest("Password is invalid.");
-                // }
-                var user = userService.Login(usernameOrEmail, password);
+                if (!isUsername)
+                {
+                    if(!isEmail)
+                    {
+                        return Results.BadRequest("Username or Email is invalid.");
+                    }
+                }
+                
+
+                if (!isPasswordValid)
+                {
+                    return Results.BadRequest("Password is invalid.");
+                }
+                var user = userService.Login(usernameOrEmail, HashHelper.Hash(password, HashHelper.secretKey));
                 var token = user != null ? new BearerToken(configuration).GenerateJwtToken(user) : null;
 
                 if (user != null && token != null) return Results.Ok(new { token, user });
-
                 return Results.Unauthorized();
             }).WithName("Login");
 
@@ -87,7 +98,7 @@ public class AuthenticationEndpoint : IEndpoint
                 {
                     return Results.BadRequest("Full Name is required.");
                 }
-                var userDto = new UserDto(fullName, username, email, address, password, dob, false);
+                var userDto = new UserDto(fullName, username, email, address, HashHelper.Hash(password, HashHelper.secretKey), dob, false);
                 var result = userService.Register(userDto);
                 return result != null
                     ? Results.Created($"/users/{result.Id}", result)

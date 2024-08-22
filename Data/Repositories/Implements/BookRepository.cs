@@ -82,7 +82,7 @@ public class BookRepository(ApplicationDbContext appDbContext) : Repository<Book
         var newAuthors = intermediateEntities.OfType<BookAuthor>().ToList();
         foreach (var newAuthor in newAuthors)
         {
-            newAuthor.BookId = id;
+                newAuthor.BookId = id;
         }
         
         foreach (var newAuthor in newAuthors)

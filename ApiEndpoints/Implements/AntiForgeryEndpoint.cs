@@ -18,19 +18,15 @@ public class AntiForgeryEndpoint : IEndpoint
         {
             var tokens = antiForgery.GetAndStoreTokens(context);
 
-            if (tokens.CookieToken == null || tokens.RequestToken == null)
-            {
-                _logger.LogError("Failed to generate antiforgery tokens. HttpContext: {HttpContext}", context);
-                return Results.NotFound("Anti-forgery tokens not found.");
-            }
 
-            context.Response.Cookies.Append("XSRF-TOKEN", tokens.CookieToken, new CookieOptions
-            {
-                HttpOnly = false,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(30)
-            });
+            if (tokens.CookieToken != null)
+                context.Response.Cookies.Append("XSRF-TOKEN", tokens.CookieToken, new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                });
+            
             return Results.Ok(new
             {
                 requestToken = tokens.RequestToken, headerName = tokens.HeaderName

@@ -1,44 +1,210 @@
+using System.Text;
+using Library.ApiEndpoints.Implements;
+using Library.Constants;
+using Library.Data.Repositories.Implements;
+using Library.Data.Repositories.Interfaces;
+using Library.DatabaseContext;
+using Library.Services.Implements;
+using Library.Services.Interfaces;
+using Library.Utils.Securities;
+using Library.Utils.Securities.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+/*
+ * The following code snippet configures the application to use the Swagger UI and database.
+ * This is default configuration for the application.
+ */
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+
+
+var configuration = builder.Configuration;
+
+// Configure database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "XSRF-TOKEN";
+    options.Cookie.HttpOnly = false;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        corsBuilder => corsBuilder.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
+/*
+ * This following code snippet configures the application to use all services.
+ * These services will be injected into the API endpoints automatically.
+ * You can add more services here.
+ * Scoped services are created once per request, it is suitable for services that work with the database.
+ */
+// builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddSingleton<IConfiguration>(configuration);
+// book
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+// book author
+builder.Services.AddScoped<IBookAuthorRepository, BookAuthorRepository>();
+// book category
+builder.Services.AddScoped<IBookCategoryRepository, BookCategoryRepository>();
+// author
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+// category
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+// loan fine
+builder.Services.AddScoped<ILoanFineService, LoanFineService>();
+builder.Services.AddScoped<ILoanFineRepository, LoanFineRepository>();
+// loan
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+// user
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+// token invalid
+builder.Services.AddScoped<ITokenInvalid, TokenInvalid>();
+// bearer token
+builder.Services.AddScoped<BearerToken>();
+// book review
+builder.Services.AddScoped<IBookReviewService, BookReviewService>();
+builder.Services.AddScoped<IBookReviewRepository, BookReviewRepository>();
+// loan detail
+builder.Services.AddScoped<ILoanDetailService, LoanDetailService>();
+builder.Services.AddScoped<ILoanDetailRepository, LoanDetailRepository>();
+
+// builder.Services.AddScoped<IAuthorService, AuthorService>();
+
+// ...
+
+
+// application configuration
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+    });
+    app.UseDeveloperExceptionPage();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
-
-var summaries = new[]
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAntiforgery();
+app.UseAuthorization();
+app.Use(async (context, next) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+    var tokenInvalid = context.RequestServices.GetRequiredService<ITokenInvalid>();
 
-app.MapGet("/weatherforecast", () =>
+    if (tokenInvalid.IsInvalid(token))
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync("Token is invalid.");
+        return;
+    }
+
+    await next();
+});
+
+
+// Create logger
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger<AntiForgeryEndpoint>();
+
+// Apply migrations automatically
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
+
+/*
+ * This following code is the API endpoints configuration.
+ * You can add more endpoints here.
+ */
+var apiGroup = app.MapGroup(ApiPrefix.ApiVersion1);
+// book
+var bookEndpoint = new BookEndpoint();
+bookEndpoint.DefineEndpoints(app, apiGroup);
+// author
+var authorEndpoint = new AuthorEndpoint();
+authorEndpoint.DefineEndpoints(app, apiGroup);
+// category
+var categoryEndpoint = new CategoryEndpoint();
+categoryEndpoint.DefineEndpoints(app, apiGroup);
+// loan fine
+var loanFineEndpoint = new LoanFineEndpoint();
+loanFineEndpoint.DefineEndpoints(app, apiGroup);
+// loan
+var loanEndpoint = new LoanEndpoint();
+loanEndpoint.DefineEndpoints(app, apiGroup);
+// user
+var userEndpoint = new UserEndpoint();
+userEndpoint.DefineEndpoints(app, apiGroup);
+// loan detail
+var loanDetailEndpoint = new LoanDetailEndpoint();
+loanDetailEndpoint.DefineEndpoints(app, apiGroup);
+// book review
+var bookReviewEndpoint = new BookReviewEndpoint();
+bookReviewEndpoint.DefineEndpoints(app, apiGroup);
+
+// Add authentication endpoints
+// /auth/* (Ex: /auth/login, /auth/logout, /auth/antiforgery-token)
+var authenticateApiGroup = app.MapGroup("/auth");
+
+// antiforgery token
+var antiForgeryEndpoint = new AntiForgeryEndpoint(logger);
+antiForgeryEndpoint.DefineEndpoints(app, authenticateApiGroup);
+// authentication
+var authentication = new AuthenticationEndpoint();
+authentication.DefineEndpoints(app, authenticateApiGroup);
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

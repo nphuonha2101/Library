@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "G:\\.NET\\Library\\Library.csproj": {}
+    "C:\\Users\\Raindrop\\Desktop\\dotNet\\Library\\Library.csproj": {}
   },
   "projects": {
-    "G:\\.NET\\Library\\Library.csproj": {
+    "C:\\Users\\Raindrop\\Desktop\\dotNet\\Library\\Library.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\.NET\\Library\\Library.csproj",
+        "projectUniqueName": "C:\\Users\\Raindrop\\Desktop\\dotNet\\Library\\Library.csproj",
         "projectName": "Library",
-        "projectPath": "G:\\.NET\\Library\\Library.csproj",
-        "packagesPath": "C:\\Users\\nphuo\\.nuget\\packages\\",
-        "outputPath": "G:\\.NET\\Library\\obj\\",
+        "projectPath": "C:\\Users\\Raindrop\\Desktop\\dotNet\\Library\\Library.csproj",
+        "packagesPath": "C:\\Users\\Raindrop\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Raindrop\\Desktop\\dotNet\\Library\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\nphuo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Raindrop\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,11 +34,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -45,11 +42,39 @@
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[8.0.6, )"
+              "version": "[8.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.7.0, )"
+            },
+            "System.Text.Json": {
+              "target": "Package",
+              "version": "[8.0.4, )"
             }
           },
           "imports": [
@@ -71,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\nphuo\\.dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
